@@ -1,0 +1,42 @@
+{% extends "metadata/layout.html" %}
+{% block content %}
+<script src="{{url_for('metadata.static', filename='js/config_script.js')}}"></script>
+<link href="{{url_for('metadata.static', filename = 'css/style.css')}}" rel="stylesheet">
+<div class="container">
+    <form method="POST" action="{{url_for('metadata.config')}}" class="form-inline">
+        <div class="row">
+            {% set boolean_arr = ["true", "false"] %}
+            {% for section, section_conf in config_dict.items() %}
+            <div class="col-md-6">
+                <legend style="text-transform: uppercase;">{{section}}</legend>
+                {% for conf, val in section_conf.items()  %}
+                <div class="form-group col-md-12">
+                        <label for="{{conf}}" class="col-2 col-form-label control-label" ><span class="comment_{{conf}}" hidden>#</span> {{conf}} = </label>
+                    {% if val.lower() is in boolean_arr %}
+                        <select class="form-check" hidden_name={{conf}} id="hid_{{conf}}">
+                            {% for bool_val in boolean_arr %}
+                            <option 
+                                class="form-control"
+                                {% if bool_val == val.lower() %}
+                                    selected
+                                {% endif %}
+                                value="{{bool_val.lower()}}">{{bool_val}}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input type="text" id="hid_{{conf}}" hidden_name={{conf}} value="{{val}}" class="form-control" />
+                    {% endif %}
+                        <!-- <input type="button" class="btn btn-primary openBtn" value="Hide it" conf_name={{conf}} name="conf_{{conf}}"> -->
+                        <input type="hidden" name="{{conf}}" id="{{conf}}" value="{{val.lower()}}" />
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        
+        </div>
+        <div class="col-md-12">
+            <button type="submit" value="Generate Config File" id="submit submitConfig" class="btn btn-primary" style="margin:10px auto; display:block">SUbmit</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

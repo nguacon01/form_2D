@@ -1,0 +1,36 @@
+label{
+    display: block
+}
+small{
+    display: block;
+}
+.hidden{
+    display: none;
+}
+
+.nus{
+    border: 1px #000;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+.nus_child, .do_sane_child, .peakpicking_child{
+    border: 1px solid #000;
+    overflow: hidden;
+    border-radius: 4px;
+    transition: visibility 0s linear 0.33s, opacity 0.33s linear;
+    transition-delay: 1s;
+}
+legend{
+    font-weight: bold;
+}
+.proj_info{
+  margin-bottom: 10px;
+  border: solid 2px #3498db;
+  overflow: hidden;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding:5px
+}
+#submitConfig{
+    margin-bottom:50px
+}

@@ -1,0 +1,16 @@
+<div class="container">
+    <div class="row">
+        <div class="form_group col-md-12 col-12">
+            <form id="uploadform" name="upload_2" method="post" action="{{url_for('metadata.upload_folder')}}">
+                <div class="form-group">
+                    <label>Import here a project folder (containing at least a .d folder, eventually a .meta file) to create a new
+                        metadata file or edit it if one is already present:</label>
+                    <input type="file" class="filestyle" data-buttonText="Select a File" name="upload_2_file" id="upload_2_file" webkitdirectory multiple>
+                </div>
+                <span>
+                    <input type="submit" class="btn btn-success" id="upload_2_btn" name="upload_2_btn" />
+                </span>
+            </form>
+        </div>
+    </div>
+</div>

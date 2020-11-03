@@ -1,0 +1,21 @@
+{% extends "metadata/layout.html" %}
+{% block content %}
+<div class="container not-home">
+
+    {% for project_name, proj_data in data.items() %}
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            {{project_name}}
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            {% for config_filename in proj_data['mscfpaths'] %}
+            <li><a class="dropdown-item" href="{{url_for('metadata.config', project_spath=proj_data['shortpath'], config_filename=config_filename)}}">{{config_filename}}</a></li>
+            {% endfor %}
+            <li><a class="dropdown-item" href="{{url_for('metadata.config', project_spath=proj_data['shortpath'], config_filename='new')}}">Create New</a></li>
+        </ul>
+    </div>
+    {% endfor %}
+</div>
+    
+{% endblock content %}

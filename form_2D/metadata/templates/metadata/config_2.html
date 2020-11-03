@@ -1,0 +1,187 @@
+{% extends "metadata/layout.html" %}
+{% block content %}
+<script src="{{url_for('metadata.static', filename='js/config_script.js')}}"></script>
+<link href="{{url_for('metadata.static', filename = 'css/config_style.css')}}" rel="stylesheet">
+<div class="container not-home">
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+        </div>
+    {% endfor %}
+
+    {% if form.errors %}
+        {% for err, err_mes in form.errors.items() %}
+        <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ err_mes[0] }}
+        </div>
+      {% endfor %}
+    {% else %}
+        <div></div>
+    {% endif %}
+    <form method="POST" action="{{url_for('metadata.config', project_spath=project_spath, config_filename=config_filename)}}">
+        {{ form.csrf_token }}
+        <!-- <div class="row"> -->
+             
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="proj_info">
+                        <div class="col-md-12">
+                            <p><b>Project folder: </b>{{project_dict['name']}}</p>
+                            <p><b>Date of acquisition: </b>{{project_dict['ser_date_aquisition']}}</p>
+                            <p><b>Estimate Bo from internal calibration: </b>{{project_dict['Bo']}}T</p>
+                            <p><b>Experiment size (F1 x F2): </b>{{project_dict['sizeF1']}}k x {{project_dict['sizeF2']}}k</p>
+                            <input type="hidden" id='sizeF1' value="{{project_dict['sizeF1']}}">
+                            <input type="hidden" id='sizeF2' value="{{project_dict['sizeF2']}}">
+                            <p><b>Data size: </b>{{project_dict['data_size']}}MB</p>
+                            <p><b>Excitation pulses from</b> {{project_dict['freqh']}}Hz (m/z={{project_dict['mzh']}}) <b>to</b> {{project_dict['freql']}}Hz (m/z={{project_dict['mzl']}})</p>
+                            <p><b>Acquisition spectral width: </b>{{project_dict['f2_specwidth']}}Hz (low mass: {{project_dict['lowmass']}})</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {{form.save_file.label}}
+                        {{form.save_file(placeholder='Your New Config File Name', class='form-control')}}
+                        <small id="apexlHelp" class="form-text text-muted">Enter your config file name</small>
+                    </div>
+                </div>
+                <!-- IMPORT SECTION -->
+                <div class="col-md-6">
+                    <legend style="text-transform: uppercase;">Import</legend>
+                    <div class="form-group hidden">
+                        {{form.apex.label}}
+                        {{form.apex(placeholder='apex', class='form-control',value=config_dict['apex'])}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.apex.description}}</small>
+                    </div>
+                    <div class="form-group">
+                        {{form.F1_specwidth.label}}
+                        {{form.F1_specwidth(placeholder='F1_specwidth', class='form-control',value=config_dict.get('F1_specwidth', '500000.0'))}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.F1_specwidth.description}}</small>
+                    </div>
+                    <div class="form-group">
+                        {{form.highmass.label}}
+                        {{form.highmass(placeholder='High Mass', class='form-control',value=config_dict.get('highmass', '2600'))}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.highmass.description}}</small>
+                    </div>
+                    <div class="form-group">
+                        {{form.format.label}}
+                        {{form.format(placeholder='format', class='form-control')}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.format.description}}</small>
+                    </div>
+                </div>
+
+                <!-- PEAK PICKING SECTION -->
+                <div class="col-md-6">
+                    <legend>PEAK PICKING</legend>
+                    <div class="form-group">
+                        {{form.peakpicking.label}}
+                        {{form.peakpicking(placeholder='peak picking', class='form-control')}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.peakpicking.description}}</small>
+                    </div>
+                    <div class="peakpicking_child row">
+                        <div class="form-group col-md-4">
+                            {{form.peakpicking_noise_level.label}}
+                            {{form.peakpicking_noise_level(placeholder='peak picking noise level', class='form-control', value=config_dict.get('peakpicking_noise_level', 10))}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.peakpicking_noise_level.description}}</small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{form.centroid.label}}
+                            {{form.centroid(placeholder='centroid', class='form-control')}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.centroid.description}}</small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{form.erase.label}}
+                            {{form.erase(placeholder='erase', class='form-control')}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.erase.description}}</small>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="col-md-12">
+                    <legend style="text-transform: uppercase;">Processing</legend>
+                    
+                    <div class="form-group">
+                        {{form.compress_outfile.label}}
+                        {{form.compress_outfile(placeholder='compress_outfile', class='form-control')}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.compress_outfile.description}}</small>
+                    </div>
+                    <div class="form-group compress_outfile_child">
+                        {{form.compress_level.label}}
+                        {{form.compress_level(placeholder='compress_level', class='form-control',value=config_dict['compress_level'])}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.compress_level.description}}</small>
+                    </div>
+                    <div class="form-group">
+                        {{form.sizemultipliers.label}}
+                        {{form.sizemultipliers(placeholder='sizemultipliers', class='form-control',value=config_dict['sizemultipliers'])}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.sizemultipliers.description}}</small>
+                        <small id="spec_sizes" class="form-text text-muted"></small>
+                        <small id="uncomp_sizes" class="form-text text-muted"></small>
+                        <input type="hidden" id="m1" value=''>
+                        <input type="hidden" id="m2" value=''>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{form.do_sane.label}}
+                        {{form.do_sane(placeholder='do_sane', class='form-control')}}
+                        <small id="apexlHelp" class="form-text text-muted">if True, the sane denoising is applied..</small>
+                    </div>
+                    <div class="do_sane_child row">
+                        <div class="form-group col-md-6">
+                            {{form.sane_rank.label}}
+                            {{form.sane_rank(placeholder='sane_rank', class='form-control',value=config_dict.get('sane_rank',15))}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.sane_rank.description}}</small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            {{form.sane_iterations.label}}
+                            {{form.sane_iterations(placeholder='Sane Iterations', class='form-control',value=config_dict.get('sane_iterations', 2))}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.sane_iterations.description}}</small>
+                        </div>
+                    </div>
+                    <!-- Non Uniform Sampled (NUS) -->
+                    <div class="form-group">
+                        {{form.nus.label}}
+                        {{form.nus(placeholder='NUS', class='form-control')}}
+                        <small id="apexlHelp" class="form-text text-muted">{{form.nus.description}}</small>
+                    </div>
+                    <div class="nus_child row">
+                        <div class="form-group col-md-12">
+                            {{form.samplingfile.label}}
+                            {{form.samplingfile(placeholder='Sampling File', class='form-control')}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.samplingfile.description}}</small>
+                        </div>
+                        <div class="form-group col-md-12">
+                            {{form.do_pgsane.label}}
+                            {{form.do_pgsane(placeholder='do_pgsane', class='form-control')}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.do_pgsane.description}}</small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{form.pgsane_rank.label}}
+                            {{form.pgsane_rank(placeholder='pgsane rank', class='form-control', value=config_dict.get('pgsane_rank', 10))}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.pgsane_rank.description}}</small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{form.pgsane_threshold.label}}
+                            {{form.pgsane_threshold(placeholder='pgsane threshold', class='form-control', value=config_dict.get('pgsane_threshold', 2.0))}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.pgsane_threshold.description}}</small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{form.pgsane_iterations.label}}
+                            {{form.pgsane_iterations(placeholder='pgsane iterations', class='form-control', value=config_dict.get('pgsane_iterations', 10))}}
+                            <small id="apexlHelp" class="form-text text-muted">{{form.pgsane_iterations.description}}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PROCESSING SECTION -->
+            
+        <!-- </div> -->
+        <div class="col-md-12">
+            <button type="submit" value="Generate Config File" id="submitConfig" class="btn btn-primary" style="margin:10px auto 50px; display:block">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

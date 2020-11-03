@@ -1,0 +1,13 @@
+{% extends "main/layout.html" %}
+{% block content %}
+<link rel='stylesheet' id='' href='{{url_for("static", filename="css/errors_style.css")}}'media='all' />
+<div id="notfound">
+    <div class="notfound">
+        <div class="notfound-404">
+            <h1>500</h1>
+        </div>
+        <h2>Oops! Something went wrong with server</h2>
+        <p>Please try it later!</p>
+    </div>
+</div>
+{% endblock content %}

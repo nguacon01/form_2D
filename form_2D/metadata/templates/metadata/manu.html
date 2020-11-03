@@ -1,0 +1,81 @@
+<div class="container">
+  <div class="row">
+    <div class="form_group col-md-12 col-12">
+      <div style="text-align: center;border-bottom-width:4px;border-bottom-color:#89c8e2;border-bottom-style:solid;">
+        <div
+          style="border-top-width:4px;border-top-color:#89c8e2;border-top-style:solid;border-bottom-width:4px;border-bottom-color:#89c8e2;border-bottom-style:solid;">
+          <H2><strong>Form for the generation of metadata files.</strong></H2>
+        </div>
+      </div>
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title"><strong>Detailed Documentation</strong></h3>
+          <span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+        </div>
+        <div class="panel-body" style="display: none;">
+          <div id="markdown">
+            <textarea id="text" style="visibility: hidden;">
+      # How to use this metadata generation form?
+      *by CASC4DE for EU-FTICR-MS  - Version 1.0.0*
+
+      - Import a project folder containing a Bruker .d folder and optionnally a .meta file previously generated. For more information about the structure of a project folder please see this template: 
+
+      <p>
+        <img src="/static/img/ProjectFolderStructure.png">
+      </p>
+
+      - Select the experiment for which you want to create or edit the metadata file and validate it with a click on "Select experiment". The name of the chosen experiment will be displayed.
+      - If a .meta file is present, its content will be used to fill out the form and you will only need to change the necessary fields before the generation of an edited version.
+      - Else, you need to fill all the mandatory fields and as much as possible of the other fields - the "Experimental" > "Acquistion" part is autofilled with the information present in the imported .d folder.
+      - When you think that you provided all necessary information about your dataset you can go down to bottom of the form and click on "Download my .meta file".
+      - Then put this file within your project folder and upload it to your EU-FTICR-MS seafile account.
+
+      # Description of the different sections content
+      This form is made of multiple section, each containing specific information. 
+      Note that not all fields are relevant for all situations. 
+      In most cases, the needed fields will open on selection of specific options. 
+      Many fields are optionnal but keep in memory that the most fields are filled, the highest is the quality of the metadata generated as it describes at best your dataset and samples.
+
+      ## Import zone
+      This is the dedicated place to choose and import your project folder following the given template structure above.
+      Briefly, a "project folder" should contain at least a .d folder from Bruker and for metadata edition a .meta file.
+
+      ## Sample
+      This is a tab grouping all information about the sample used for the project. 
+      The section is divided in two sub-sections: first, the global handling and safety considerations and then the specific considerations to take into account depending on the sample type (chemical, biochemical, etc.)
+
+      ### Global handling and safety considerations
+      Here you will be asked all the needed information to handle your sample as its name, its conservation specificities, how it was prepared, its mass or concentration. 
+      You will also be asked the risks associated to the sample both for human health and environment.
+
+      ### Specific considerations according to the type of sample
+      This part is divided in multiple sub-parts, you only need to give information for the relevant one according your sample type. 
+      These are specific questions to describe at best the sample and allow safety conditions work.
+
+      ## Global Set-Up
+      This section is dedicated to the description of your experimental global set-up. First you need to choose the option corresponding to your experiment (Direct Injection, LC/GC, Imaging, etc.), then a specific tab will appear with required parameters associated to the selected type of experiment.
+
+      ## Experimental
+      Here are required more specific information about the experimental set-up. You should indicate if you used a Solarix or Apex Spectrometer and the source. 
+      Additional parameters are asked according to the chosen source. 
+      Finally the magnetic field is asked but automatically filled with the information present in the imported folder.
+      A sub-section entitled "Acquistion" is also present but completely pre-filled with the information gathered within the .d folder.
+
+      ## Raw Data Preprocessing
+      In this free text part you are asked to enter all information regarding the eventual preprocessing you would have applied to your raw data. 
+      If you give information here please be very precise so that anyone could understand, reproduce and reuse the dataset. 
+
+      ## Additional comments
+      This section is completely optionnal and you are able to add here any comment or information you find relevant to your data and which would not have been asked in the previous sections. 
+      Here again, be as precise as possible. 
+      Keep in mind that these information are not only notes for your usage but this will be of importance to make your data F.A.I.R.
+
+
+      *If you have any further questions and cannot find the answer in this documentation, please do not hesitate to contact us.*
+      </textarea>
+          </div>
+        </div>
+      </div>
+  </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+{% extends "auth/layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="col-md-6 login-form-1">
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+        <h3>Login</h3>
+        <form action="{{url_for('auth.login')}}" method="POST" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{form.email(placeholder='Your Email', class='form-control')}}
+            </div>
+            <div class="form-group">
+                {{form.password(placeholder='Your Password', class='form-control')}}
+            </div>
+            <div class="form-group">
+                {{form.submit(class='btnSubmit', value='Login')}}
+            </div>
+            <div class="form-group">
+                <a href="{{url_for('auth.signup')}}" class="ForgetPwd">Register</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

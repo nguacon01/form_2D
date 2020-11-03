@@ -1,0 +1,12 @@
+<div class="container" style="text-align: justify;padding: 0px;margin-top: 5px">
+  <form method="POST" enctype="multipart/form-data" action="{{ url_for('metadata.import_folder') }}">
+    <div class="form-group">
+      <label>Import here a project folder (containing at least a .d folder, eventually a .meta file) to create a new metadata file or edit it if one is already present:</label>
+      <input class="file blue" type="file" id="BSbtninfo" name="file"  onchange="pressed()" webkitdirectory multiple>
+    </div>
+    <span>
+      <input type="submit" class="btn btn-success" value="Import">
+    </span>
+  </form>
+  <!-- <p style="color: darkred"><strong>Imported folder: {% if param.fold_name %} {{param.fold_name}} {% endif %}</strong></p> -->
+</div>

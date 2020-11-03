@@ -1,0 +1,164 @@
+<div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title">Global handling and safety considerations</h3>
+      <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+    </div>
+    <div class="panel-body" style="display: block;">
+      <div class="form-group">
+        <label class="control-label required" for="FileName">Name</label>
+        <div>
+          <input id="FileName" name="FileName" type="text" placeholder="Sample Name or File Name"
+            class="form-control input-md" {% if param.FileName %} value={{param.FileName}} {% endif %} required>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Mass">Mass (g)</label>
+        <div>
+          <input id="Mass" name="Mass" type="number" step=any {% if param.Mass %} value={{param.Mass}} {% endif %}
+            class="form-control input-md">
+          <span class="help-block">NB: You do not need to fill all fields concerning mass,volume and concentration
+            -
+            just fill those which are relevant to your case.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Vol">Volume (cm<sup>3</sup>)</label>
+        <div>
+          <input id="Vol" name="Vol" type="number" step=any {% if param.Vol %} value={{param.Vol}} {% endif %}
+            class="form-control input-md">
+          <span class="help-block">NB: You do not need to fill all fields concerning mass,volume and concentration
+            -
+            just fill those which are relevant to your case.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Conc">Concentration (mol.L<sup>-1</sup>)</label>
+        <div>
+          <input id="Conc" name="Conc" type="number" step=any {% if param.Conc %} value={{param.Conc}} {% endif %}
+            class="form-control input-md">
+          <span class="help-block">NB: You do not need to fill all fields concerning mass,volume and concentration
+            -
+            just fill those which are relevant to your case.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label required" for="Temp">Conservation Temperature (C°)</label>
+        <div>
+          <input id="Temp" name="Temp" type="number" step=any {% if param.Temp %} value={{param.Temp}} {% endif %}
+            class="form-control input-md" required>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Risks_Health">List risks for human health, if any.</label>
+        <div>
+          <input id="Risks_Health" name="Risks_Health" type="text" placeholder="risk1, risk2"
+            {% if param.Risks_Health %} value={{param.Risks_Health}} {% endif %} class="form-control input-md">
+          <span class="help-block">List, separated with commas.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Risks_Enviro">List environmental risks, if any.</label>
+        <div>
+          <input id="Risks_Enviro" name="Risks_Enviro" type="text" placeholder="risk1, risk2"
+            {% if param.Risks_Enviro %} value={{param.Risks_Enviro}} {% endif %} class="form-control input-md">
+          <span class="help-block">List, separated with commas.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Risks_Manip">List risks associated to reception, use or disposal
+          (handling) of the sample, if any.</label>
+        <div>
+          <input id="Risks_Manip" name="Risks_Manip" type="text" placeholder="risk1, risk2"
+            {% if param.Risks_Manip %} value={{param.Risks_Manip}} {% endif %} class="form-control input-md">
+          <span class="help-block">List, separated with commas.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="OutsideWelcLabPrep">Was the sample prepared outside the welcoming
+          laboratory?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="OutsideWelcLabPrep-0">
+              <input type="radio" name="OutsideWelcLabPrep" id="OutsideWelcLabPrep-0" value="True"
+                {% if "True"==param.OutsideWelcLabPrep %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="OutsideWelcLabPrep-1">
+              <input type="radio" name="OutsideWelcLabPrep" id="OutsideWelcLabPrep-1" value="False"
+                {% if "False"==param.OutsideWelcLabPrep %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label classe="control-label" for="VirtualAccess">Will the experiment be done with virtual access
+          ?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="VirtualAccess-Y">
+              <input type="radio" name="VirtualAccess" id="VirtualAccess-Y" value="True"
+                {% if "True"==param.VirtualAccess %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="VirtualAccess-N">
+              <input type="radio" name="VirtualAccess" id="VirtualAccess-N" value="False"
+                {% if "False"==param.VirtualAccess %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+        <span class="help-block">If yes, please answer the following questions to prepare a sample management
+          procedure.</span>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="InWelcLabManip">Was the sample manipulated at the welcoming
+          laboratory?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="InWelcLabManip-0">
+              <input type="radio" name="InWelcLabManip" id="InWelcLabManip-0" value="True"
+                {% if "True"==param.InWelcLabManip %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="InWelcLabManip-1">
+              <input type="radio" name="InWelcLabManip" id="InWelcLabManip-1" value="False"
+                {% if "False"==param.InWelcLabManip %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Storage">Where is the sample stored after experiment?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Storage-0">
+              <input type="radio" name="Storage" id="Storage-0" value="welcoming_lab"
+                {% if "welcoming_lab"==param.Storage %} checked="checked" {% endif %}>
+              Within the welcoming laboratory
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Storage-1">
+              <input type="radio" name="Storage" id="Storage-1" value="invited_lab"
+                {% if "invited_lab"==param.Storage %} checked="checked" {% endif %}>
+              Brought away to the invited laboratory
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+    </div>
+  </div>

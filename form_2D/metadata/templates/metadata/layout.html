@@ -1,0 +1,159 @@
+<!--INFORMATIONS
+This file is the layout that wraps every other html page. 
+
+Author : 
+    - Laura Duciel CASC4DE
+    - ĐỖ Mạnh Dũng CASC4DE
+-->
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> Flask Form for Metadata File Generation</title>
+
+    {% assets "main_css_bundle" %}
+    <link rel='stylesheet' href='{{ASSET_URL}}' media='all' />
+    {% endassets %}
+
+    {% assets "main_js_bundle" %}
+    <script type='text/javascript' src='{{ASSET_URL}}'></script>
+    {% endassets %}
+
+    <!-- To push footer to page bottom -->
+    <div id="globalWrapper">
+        <!------header------>
+        <div class="navbar-wrapper">
+            <div class="container"
+                style="padding-right: 0px !important; padding-left: 0px !important; margin-right: auto; margin-left: auto; width: auto !important;">
+                <nav class="navbar navbar-inverse navbar-static-top"
+                    style="background-color: #0A2B3D;padding-right: 0px !important; padding-left: 0px !important; margin-right: auto; margin-left: auto; width: auto !important; margin-bottom: 0px">
+                    <div class="container" id="nav-container"
+                        style="padding-right: 0px !important; padding-left: 0px !important; margin-right: auto; margin-left: auto; width: auto !important;">
+                        <div class="col-md-3">
+                            <p style="color:white;font-size: 11px" class="navbar-text">
+                                <a href="http://www.eu-fticr-ms.eu/"><img alt="Bootstrap Image Preview"
+                                        src="{{url_for('metadata.static', filename = 'img/eufticr_whitelogo.png')}}"
+                                        style="width:auto;height:60px" /></a>
+                            </p>
+                        </div>
+                        <div class="col-md-6" style="text-align: center">
+                            <p style="color:white;font-size: 11px" class="navbar-text">
+                                <a></a>
+                            </p>
+                        </div>
+                        <!-- <div class="col-md-3" style="text-align: right;padding: 20px">
+                            <div class="buttons">
+                                <a class="btn" id="popup_button" role="button" data-toggle="modal"
+                                    data-target="#myModal"><img class="btn_header"
+                                        src="{{url_for('metadata.static', filename = 'img/power-standby.svg')}}"
+                                        title="Quit the application" />
+                                </a>
+                            </div>
+                        </div> -->
+                    </div>
+                </nav>
+                <!-- The Bootstrap Modal (popup) -->
+
+                <div id="myModal" class="modal fade">
+                    <div class="modal-dialog modal-confirm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="icon-box">
+                                    <img src="{{url_for('metadata.static', filename = 'img/shutdown_red.svg')}}"
+                                        style="width:75px" />
+                                </div>
+                                <p style="font-size: 40px;" class="modal-title"><strong
+                                        style=" vertical-align: sub !important;">Are you sure?</strong></p>
+                                <button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p style="font-size: 20px">You are on the point to quit the Metadata form, was it your
+                                    intention?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <a type="button" class="btn btn-info" data-dismiss="modal"
+                                    style="font-size: 20px;color: white">Cancel</a>
+                                <a name="quitbtn" id="quitbtn" href="/quit" class="btn btn-danger"
+                                    style="font-size: 20px; color: white">Yes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /container -->
+        </div>
+        <!-- block content -->
+        {% block content %}{% endblock %}
+        <!-- footer -->
+        <nav class="navbar navbar-inverse navbar-fixed-bottom" style="background-color: #0A2B3D;height:40px">
+            <div class="navbar-footer">
+                <div class="container">
+                    <div class="col-md-3 col-12">
+                        <p style="color:white;font-size: 11px" class="navbar-text">
+                            <a></a>
+                        </p>
+                    </div>
+                    <div class="col-md-6 col-12" style="text-align: center">
+                        <p style="color:white;font-size: 11px;align-content: center; vertical-align: bottom;padding-top: 7px"
+                            class="navbar-text-center">
+                            <strong>Casc4de 2019 | <a href="">Terms and conditions</a>
+                                |<a href="/contact"> Contact us </a></strong><br>
+                            <a href="http://www.casc4de.eu/"><img alt="Bootstrap Image Preview"
+                                    src="{{url_for('metadata.static', filename = 'img/casc4de_logo_complete.png')}}"
+                                    style="width:auto;height:20px" /></a>
+                        </p>
+                    </div>
+                    <div class="col-md-3 col-12" style="text-align: right;padding-top: 15px">
+                        <p style="color:white;font-size: 11px;align-content: right; vertical-align: bottom;"
+                            class="navbar-text-center">
+                            <a href="https://github.com/"><img alt="Bootstrap Image Preview"
+                                    src="{{url_for('metadata.static', filename = 'img/bitbucketlogo.png')}}"
+                                    style="width:auto;height:20px;padding-right: 2px;padding-left: 2px" /></a>
+                            <a href="https://twitter.com/_casc4de_"><img
+                                    src="{{url_for('metadata.static', filename = 'img/Twitter_Bird.png')}}"
+                                    style="width:auto;height:20px;padding-right: 2px;padding-left: 2px" /></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        $(document).on('click', '.panel-heading', function (e) {
+            var $this = $(this);
+            if (!$this.hasClass('panel-collapsed')) {
+                $this.parents('.panel').find('.panel-body').slideUp();
+                $this.addClass('panel-collapsed');
+                $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+            } else {
+                $this.parents('.panel').find('.panel-body').slideDown();
+                $this.removeClass('panel-collapsed');
+                $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+            }
+        })
+    </script>
+    <!-- Notification -->
+    <div role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="true">
+        <!-- <div class="toast-header">
+            <svg class=" rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+                <rect fill="#007aff" width="100%" height="100%" />
+            </svg>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div> -->
+        <div class="toast-body"></div>
+    </div>
+
+    </body>
+    <script>
+        $(function () {
+            $('#quitbtn').on('click', function () { window.close(); });  // quit button
+        });
+    </script>
+
+</html>

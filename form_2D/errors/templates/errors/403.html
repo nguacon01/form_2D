@@ -1,0 +1,14 @@
+{% extends "main/layout.html" %}
+{% block content %}
+<link rel='stylesheet' id='' href='{{url_for("static", filename="css/errors_style.css")}}'media='all' />
+<div id="notfound">
+    <div class="notfound">
+        <div class="notfound-404">
+            <h1>403</h1>
+        </div>
+        <h2>Permission denided</h2>
+        <p>Please check your permission for this page!!</p>
+        <a href="/">Go To Homepage</a>
+    </div>
+</div>
+{% endblock content %}

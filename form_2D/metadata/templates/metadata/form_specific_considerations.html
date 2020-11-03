@@ -1,0 +1,679 @@
+<div class="panel panel-info">
+    <div class="panel-heading dropdown">
+      <h3 class="panel-title">Chemical</h3>
+      <span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+    </div>
+    <div class="panel-body" style="display: none;">
+      <span>
+        <H4><strong><u> Description </u></strong></H4>
+      </span>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Formula">Formula</label>
+        <div>
+          <input id="Chem_Formula" name="Chem_Formula" type="text" {% if param.Chem_Formula %}
+            value={{param.Chem_Formula}} {% endif %} class="form-control input-md" placeholder="CaHbOcNd">
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Type">Chemical Type</label>
+        <br>
+        <div class="checkbox-inline">
+          <label for="Chem_Type-0">
+            <input type="checkbox" name="Chem_Type" id="Chem_Type-0" value="Gas" {% if "Gas"==param.Chem_Type %}
+              checked="checked" {% endif %}>
+            Gas
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label for="Chem_Type-1">
+            <input type="checkbox" name="Chem_Type" id="Chem_Type-1" value="Powder"
+              {% if "Powder"==param.Chem_Type %} checked="checked" {% endif %}>
+            Powder
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label for="Chem_Type-2">
+            <input type="checkbox" name="Chem_Type" id="Chem_Type-2" value="Liquid"
+              {% if "Liquid"==param.Chem_Type %} checked="checked" {% endif %}>
+            Liquid
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label for="Chem_Type-3">
+            <input type="checkbox" name="Chem_Type" id="Chem_Type-3" value="Film" {% if "Film"==param.Chem_Type %}
+              checked="checked" {% endif %}>
+            Film
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label for="Chem_Type-4">
+            <input type="checkbox" name="Chem_Type" id="Chem_Type-4" value="Bulk" {% if "Bulk"==param.Chem_Type %}
+              checked="checked" {% endif %}>
+            Bulk
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="chem_solv">Chemical Solvent</label>
+        <select id="chem_solv" name="chem_solv" class="form-control">
+          <option value="pentane" {% if "pentane"==param.chem_solv %} selected="selected" {% endif %}>pentane
+          </option>
+          <option value="cyclopentane" {% if "cyclopentane"==param.chem_solv %} selected="selected" {% endif %}>
+            cyclopentane</option>
+          <option value="hexane" {% if "hexane"==param.chem_solv %} selected="selected" {% endif %}>hexane
+          </option>
+          <option value="cyclohexane" {% if "cyclohexane"==param.chem_solv %} selected="selected" {% endif %}>
+            cyclohexane</option>
+          <option value="benzene" {% if "benzene"==param.chem_solv %} selected="selected" {% endif %}>benzene
+          </option>
+          <option value="toluene" {% if "toluene"==param.chem_solv %} selected="selected" {% endif %}>toluene
+          </option>
+          <option value="1,4-dioxane" {% if "1,4-dioxane"==param.chem_solv %} selected="selected" {% endif %}>
+            1,4-dioxane</option>
+          <option value="chloroform" {% if "chloroform"==param.chem_solv %} selected="selected" {% endif %}>
+            chloroform</option>
+          <option value="diethyl ether" {% if "diethyl ether"==param.chem_solv %} selected="selected" {% endif %}>
+            diethyl ether</option>
+          <option value="dichloromethane (DCM)" {% if "dichloromethane (DCM)"==param.chem_solv %}
+            selected="selected" {% endif %}>dichloromethane (DCM)</option>
+          <option value="tetrahydrofuran (THF)" {% if "tetrahydrofuran (THF)"==param.chem_solv %}
+            selected="selected" {% endif %}>tetrahydrofuran (THF)</option>
+          <option value="ethyl acetate" {% if "ethyl acetate"==param.chem_solv %} selected="selected" {% endif %}>
+            ethyl acetate</option>
+          <option value="acetone" {% if "acetone"==param.chem_solv %} selected="selected" {% endif %}>acetone
+          </option>
+          <option value="dimethylformamide (DMF)" {% if "dimethylformamide (DMF)"==param.chem_solv %}
+            selected="selected" {% endif %}>dimethylformamide (DMF)</option>
+          <option value="acetonitrile (MeCN)" {% if "acetonitrile (MeCN)"==param.chem_solv %} selected="selected"
+            {% endif %}>acetonitrile (MeCN)</option>
+          <option value="dimethyl sulfoxide (DMSO)" {% if "dimethyl sulfoxide (DMSO)"==param.chem_solv %}
+            selected="selected" {% endif %}>dimethyl sulfoxide (DMSO)</option>
+          <option value="nitromethane" {% if "nitromethane"==param.chem_solv %} selected="selected" {% endif %}>
+            nitromethane</option>
+          <option value="propylene carbonate" {% if "propylene carbonate"==param.chem_solv %} selected="selected"
+            {% endif %}>propylene carbonate</option>
+          <option value="formic acid" {% if "formic acid"==param.chem_solv %} selected="selected" {% endif %}>
+            formic
+            acid</option>
+          <option value="n-butanol" {% if "n-butanol"==param.chem_solv %} selected="selected" {% endif %}>
+            n-butanol
+          </option>
+          <option value="isopropyl alcohol (IPA)" {% if "isopropyl alcohol (IPA)"==param.chem_solv %}
+            selected="selected" {% endif %}>isopropyl alcohol (IPA)</option>
+          <option value="n-propanol" {% if "n-propanol"==param.chem_solv %} selected="selected" {% endif %}>
+            n-propanol</option>
+          <option value="ethanol" {% if "ethanol"==param.chem_solv %} selected="selected" {% endif %}>ethanol
+          </option>
+          <option value="methanol" {% if "methanol"==param.chem_solv %} selected="selected" {% endif %}>methanol
+          </option>
+          <option value="acetic acid" {% if "acetic acid"==param.chem_solv %} selected="selected" {% endif %}>
+            acetic
+            acid</option>
+          <option value="water" {% if "water"==param.chem_solv %} selected="selected" {% endif %}>water</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Addit">Additives</label>
+        <div>
+          <input id="Chem_Addit" name="Chem_Addit" type="text" placeholder="additive1, additive2"
+            {% if param.Chem_Addit %} value={{param.Chem_Addit}} {% endif %} class="form-control input-md">
+          <span class="help-block">List of the chemical additives in the sample, separated with commas.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Press">Packaging Pressure (bar)</label>
+        <div>
+          <input id="Chem_Press" name="Chem_Press" type="number" step=any placeholder="1"
+            {% if param.Chem_Press %} value={{param.Chem_Press}} {% endif %} class="form-control input-md">
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <span>
+        <H4><strong><u> Safety </u></strong></H4>
+      </span>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Tox">Toxic?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Tox-0">
+              <input type="radio" name="Chem_Tox" id="Chem_Tox-0" value="True" {% if "True"==param.Chem_Tox %}
+                checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Tox-1">
+              <input type="radio" name="Chem_Tox" id="Chem_Tox-1" value="False" {% if "False"==param.Chem_Tox %}
+                checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Expl">Explosive?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Expl-0">
+              <input type="radio" name="Chem_Expl" id="Chem_Expl-0" value="True" {% if "True"==param.Chem_Expl %}
+                checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Expl-1">
+              <input type="radio" name="Chem_Expl" id="Chem_Expl-1" value="False"
+                {% if "False"==param.Chem_Expl %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Infla">Inflammable?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Infla-0">
+              <input type="radio" name="Chem_Infla" id="Chem_Infla-0" value="True"
+                {% if "True"==param.Chem_Infla %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Infla-1">
+              <input type="radio" name="Chem_Infla" id="Chem_Infla-1" value="False"
+                {% if "False"==param.Chem_Infla %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Carcino">Carcinogenic?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Carcino-0">
+              <input type="radio" name="Chem_Carcino" id="Chem_Carcino-0" value="True"
+                {% if "True"==param.Chem_Carcino %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Carcino-1">
+              <input type="radio" name="Chem_Carcino" id="Chem_Carcino-1" value="False"
+                {% if "False"==param.Chem_Carcino %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Harm">Harmful (noxious)?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Harm-0">
+              <input type="radio" name="Chem_Harm" id="Chem_Harm-0" value="True" {% if "True"==param.Chem_Harm %}
+                checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Harm-1">
+              <input type="radio" name="Chem_Harm" id="Chem_Harm-1" value="False"
+                {% if "False"==param.Chem_Harm %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Irrit">Irritant?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Irrit-0">
+              <input type="radio" name="Chem_Irrit" id="Chem_Irrit-0" value="True"
+                {% if "True"==param.Chem_Irrit %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Irrit-1">
+              <input type="radio" name="Chem_Irrit" id="Chem_Irrit-1" value="False"
+                {% if "False"==param.Chem_Irrit %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Pol">Polluant?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Pol-0">
+              <input type="radio" name="Chem_Pol" id="Chem_Pol-0" value="True" {% if "True"==param.Chem_Pol %}
+                checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Pol-1">
+              <input type="radio" name="Chem_Pol" id="Chem_Pol-1" value="False" {% if "False"==param.Chem_Pol %}
+                checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_Corros">Corrosive?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Chem_Corros-0">
+              <input type="radio" name="Chem_Corros" id="Chem_Corros-0" value="True"
+                {% if "True"==param.Chem_Corros %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Chem_Corros-1">
+              <input type="radio" name="Chem_Corros" id="Chem_Corros-1" value="False"
+                {% if "False"==param.Chem_Corros %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Chem_SafetySpec_URL">URL to safety specifications for the sample</label>
+        <div>
+          <input id="Chem_SafetySpec_URL" name="Chem_SafetySpec_URL" type="text" placeholder="http://url.com"
+            class="form-control input-md">
+          <span class="help-block">Separate each URL with comma.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title">Biochemical</h3>
+      <span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+    </div>
+    <div class="panel-body" style="display: none;">
+      <span>
+        <H4><strong><u> Description </u></strong></H4>
+      </span>
+      <div class="form-group">
+        <label class="control-label" for="Bio_Acro">Acronym</label>
+        <div>
+          <input id="Bio_Acro" name="Bio_Acro" type="text" {% if param.Bio_Acro %} value={{param.Bio_Acro}}
+            {% endif %} class="form-control input-md">
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_Orig">Sample(s) Origin</label>
+        <div>
+          <input id="Bio_Orig" name="Bio_Orig" type="text" {% if param.Bio_Orig %} value={{param.Bio_Orig}}
+            {% endif %} class="form-control input-md">
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Biochem_Type">Biochemical Type</label>
+        <br>
+        <div class="checkbox-inline">
+          <label for="Biochem_Type-1">
+            <input type="checkbox" name="Biochem_Type" id="Biochem_Type-1" value="Powder"
+              {% if "Powder"==param.Biochem_Type %} checked="checked" {% endif %}>
+            Powder
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label for="Biochem_Type-2">
+            <input type="checkbox" name="Biochem_Type" id="Biochem_Type-2" value="Solution"
+              {% if "Solution"==param.Biochem_Type %} checked="checked" {% endif %}>
+            Solution
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label for="Biochem_Type-4">
+            <input type="checkbox" name="Biochem_Type" id="Biochem_Type-4" value="Bulk"
+              {% if "Bulk"==param.Biochem_Type %} checked="checked" {% endif %}>
+            Bulk
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_WelLab_Country">Is the sample from the welcoming laboratory
+          country?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Bio_WelLab_Country-0">
+              <input type="radio" name="Bio_WelLab_Country" id="Bio_WelLab_Country-0" value="True"
+                {% if "True"==param.Bio_WelLab_Country %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Bio_WelLab_Country-1">
+              <input type="radio" name="Bio_WelLab_Country" id="Bio_WelLab_Country-1" value="False"
+                {% if "False"==param.Bio_WelLab_Country %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_SampNum">Number of sample(s)</label>
+        <div>
+          <input id="Bio_SampNum" name="Bio_SampNum" type="number" placeholder="1" {% if param.Bio_SampNum %}
+            value={{param.Bio_SampNum}} {% endif %} class="form-control input-md">
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <span>
+        <H4><strong><u> Safety </u></strong></H4>
+      </span>
+      <div class="form-group">
+        <label class="control-label" for="Bio_SampRiskGrp">Sample group of risk (*)</label>
+        <div>
+          <input id="Bio_SampRiskGrp" name="Bio_SampRiskGrp" type="number" placeholder="1"
+            {% if param.Bio_SampRiskGrp %} value={{param.Bio_SampRiskGrp}} {% endif %}
+            class="form-control input-md">
+          <span class="help-block">From 1 to 4.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_HostRiskGrp">Host group of risk (*)</label>
+        <div>
+          <input id="Bio_HostRiskGrp" name="Bio_HostRiskGrp" type="number" placeholder="1"
+            {% if param.Bio_HostRiskGrp %} value={{param.Bio_HostRiskGrp}} {% endif %}
+            class="form-control input-md">
+          <span class="help-block">From 1 to 4.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_RecombSamp">Is the sample recombinant?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Bio_RecombSamp-0">
+              <input type="radio" name="Bio_RecombSamp" id="Bio_RecombSamp-0" value="True"
+                {% if "True"==param.Bio_RecombSamp %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Bio_RecombSamp-1">
+              <input type="radio" name="Bio_RecombSamp" id="Bio_RecombSamp-1" value="False"
+                {% if "False"==param.Bio_RecombSamp %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_ActiveVirus">Is the sample an active virus?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Bio_ActiveVirus-0">
+              <input type="radio" name="Bio_ActiveVirus" id="Bio_ActiveVirus-0" value="True"
+                {% if "True"==param.Bio_ActiveVirus %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Bio_ActiveVirus-1">
+              <input type="radio" name="Bio_ActiveVirus" id="Bio_ActiveVirus-1" value="False"
+                {% if "False"==param.Bio_ActiveVirus %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_VirulFactor">Does the sample present a virulence factor?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Bio_VirulFactor-0">
+              <input type="radio" name="Bio_VirulFactor" id="Bio_VirulFactor-0" value="True"
+                {% if "True"==param.Bio_VirulFactor %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Bio_VirulFactor-1">
+              <input type="radio" name="Bio_VirulFactor" id="Bio_VirulFactor-1" value="False"
+                {% if "False"==param.Bio_VirulFactor %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Bio_Prion">Is the sample a prion protein?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Bio_Prion-0">
+              <input type="radio" name="Bio_Prion" id="Bio_Prion-0" value="True" {% if "True"==param.Bio_Prion %}
+                checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Bio_Prion-1">
+              <input type="radio" name="Bio_Prion" id="Bio_Prion-1" value="False"
+                {% if "False"==param.Bio_Prion %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title">Cellular</h3>
+      <span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+    </div>
+    <div class="panel-body" style="display: none;">
+      <span>
+        <H4><strong><u> Description </u></strong></H4>
+      </span>
+      <div class="form-group">
+        <label class="control-label" for="Cell_SampActivity">Is the sample</label>
+        <label class="radio-inline" for="Cell_SampActivity-0">
+          <input type="radio" name="Cell_SampActivity" id="Cell_SampActivity-0" value="Active"
+            {% if "Active"==param.Cell_SampActivity %} checked="checked" {% endif %}>
+          Active
+        </label>
+        <label class="radio-inline" for="Cell_SampActivity-1">
+          <input type="radio" name="Cell_SampActivity" id="Cell_SampActivity-1" value="Dead"
+            {% if "Dead"==param.Cell_SampActivity %} checked="checked" {% endif %}>
+          Dead
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_CellTissueSamp">Is the sample</label>
+        <label class="radio-inline" for="Cell_CellTissueSamp-0">
+          <input type="radio" name="Cell_CellTissueSamp" id="Cell_CellTissueSamp-0" value="Cellular"
+            {% if "Cellular"==param.Cell_CellTissueSamp %} checked="checked" {% endif %}>
+          Cellular
+        </label>
+        <label class="radio-inline" for="Cell_CellTissueSamp-1">
+          <input type="radio" name="Cell_CellTissueSamp" id="Cell_CellTissueSamp-1" value="Tissue"
+            {% if "Tissue"==param.Cell_CellTissueSamp %} checked="checked" {% endif %}>
+          Tissue
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_SampType">Sample Type</label>
+        <label class="checkbox-inline" for="Cell_SampType-0">
+          <input type="checkbox" name="Cell_SampType" id="Cell_SampType-0" value="Human"
+            {% if "Human"==param.Cell_SampType %} checked="checked" {% endif %}>
+          Human
+        </label>
+        <label class="checkbox-inline" for="Cell_SampType-1">
+          <input type="checkbox" name="Cell_SampType" id="Cell_SampType-1" value="Animal"
+            {% if "Animal"==param.Cell_SampType %} checked="checked" {% endif %}>
+          Animal
+        </label>
+        <label class="checkbox-inline" for="Cell_SampType-2">
+          <input type="checkbox" name="Cell_SampType" id="Cell_SampType-2" value="Bacterial"
+            {% if "Bacterial"==param.Cell_SampType %} checked="checked" {% endif %}>
+          Bacterial
+        </label>
+        <label class="checkbox-inline" for="Cell_SampType-3">
+          <input type="checkbox" name="Cell_SampType" id="Cell_SampType-3" value="Vegetal"
+            {% if "Vegetal"==param.Cell_SampType %} checked="checked" {% endif %}>
+          Vegetal
+        </label>
+        <label class="checkbox-inline" for="Cell_SampType-4">
+          <input type="checkbox" name="Cell_SampType" id="Cell_SampType-4" value="Yeast"
+            {% if "Yeast"==param.Cell_SampType %} checked="checked" {% endif %}>
+          Yeast
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_CellOrigSamp">Does the sample originate from</label>
+        <label class="checkbox-inline" for="Cell_CellOrigSamp-0">
+          <input type="checkbox" name="Cell_CellOrigSamp" id="Cell_CellOrigSamp-0" value="Primary line"
+            {% if "Primary line"==param.Cell_CellOrigSamp %} checked="checked" {% endif %}>
+          Primary line
+        </label>
+        <label class="checkbox-inline" for="Cell_CellOrigSamp-1">
+          <input type="checkbox" name="Cell_CellOrigSamp" id="Cell_CellOrigSamp-1"
+            value="Cell immortalized tumor line" {% if "Cell immortalized tumor line"==param.Cell_CellOrigSamp %}
+            checked="checked" {% endif %}>
+          Cell immortalized tumor line
+        </label>
+        <label class="checkbox-inline" for="Cell_CellOrigSamp-2">
+          <input type="checkbox" name="Cell_CellOrigSamp" id="Cell_CellOrigSamp-2" value="Stem cell"
+            {% if "Stem cell"==param.Cell_CellOrigSamp %} checked="checked" {% endif %}>
+          Stem cell
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_GMO">Is the sample a Genetically Modified Organism (GMO)?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Cell_GMO-0">
+              <input type="radio" name="Cell_GMO" id="Cell_GMO-0" value="True" {% if "True"==param.Cell_GMO %}
+                checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Cell_GMO-1">
+              <input type="radio" name="Cell_GMO" id="Cell_GMO-1" value="False" {% if "False"==param.Cell_GMO %}
+                checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_Strain">For bacterial or viral origin specify strain</label>
+        <div>
+          <input id="Cell_Strain" name="Cell_Strain" type="text" placeholder="1" {% if param.Cell_Strain %}
+            value={{param.Cell_Strain}} {% endif %} class="form-control input-md">
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_WelLab_Country">Is the sample from the welcoming laboratory
+          country?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Cell_WelLab_Country-0">
+              <input type="radio" name="Cell_WelLab_Country" id="Cell_WelLab_Country-0" value="True"
+                {% if "True"==param.Cell_WelLab_Country %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Cell_WelLab_Country-1">
+              <input type="radio" name="Cell_WelLab_Country" id="Cell_WelLab_Country-1" value="False"
+                {% if "False"==param.Cell_WelLab_Country %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_SampNum">Number of sample(s)</label>
+        <div>
+          <input id="Cell_SampNum" name="Cell_SampNum" type="number" placeholder="1" {% if param.Bio_SampNum %}
+            value={{param.Bio_SampNum}} {% endif %} class="form-control input-md">
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <span>
+        <H4><strong><u> Safety </u></strong></H4>
+      </span>
+      <div class="form-group">
+        <label class="control-label" for="Cell_SampRiskGrp">Sample group of risk (*)</label>
+        <div>
+          <input id="Cell_SampRiskGrp" name="Cell_SampRiskGrp" type="number" placeholder="1"
+            {% if param.Cell_SampRiskGrp %} value={{param.Cell_SampRiskGrp}} {% endif %}
+            class="form-control input-md">
+          <span class="help-block">From 1 to 4.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_VirulFactor">Does the sample present a virulence factor?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Cell_VirulFactor-0">
+              <input type="radio" name="Cell_VirulFactor" id="Cell_VirulFactor-0" value="True"
+                {% if "True"==param.Cell_VirulFactor %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Cell_VirulFactor-1">
+              <input type="radio" name="Cell_VirulFactor" id="Cell_VirulFactor-1" value="False"
+                {% if "False"==param.Cell_VirulFactor %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="Cell_Prion">Is the sample a prion protein?</label>
+        <div>
+          <div class="radio-inline">
+            <label for="Cell_Prion-0">
+              <input type="radio" name="Cell_Prion" id="Cell_Prion-0" value="True"
+                {% if "True"==param.Cell_Prion %} checked="checked" {% endif %}>
+              Yes
+            </label>
+          </div>
+          <div class="radio-inline">
+            <label for="Cell_Prion-1">
+              <input type="radio" name="Cell_Prion" id="Cell_Prion-1" value="False"
+                {% if "False"==param.Cell_Prion %} checked="checked" {% endif %}>
+              No
+            </label>
+          </div>
+          <span class="help-block"></span>
+        </div>
+      </div>
+    </div>
+  </div>
