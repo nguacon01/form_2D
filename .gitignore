@@ -10,3 +10,5 @@ form_2D/static/.webassets-cache/
 log.txt
 form_2D/static/gen/
 env/
+app.sock
+custom_seafileapi

@@ -10,8 +10,8 @@ from spike.NPKConfigParser import NPKConfigParser
 from spike.FTICR import FTICRData
 from spike.File import Solarix
 from datetime import datetime
-from ..EUFT_Spike import processing_4EU as proc_spike
-from ..EUFT_Spike.Tools import FTICR_INTER as FI_tools
+from form_2D.libs.EUFT_Spike import processing_4EU as proc_spike
+from form_2D.libs.EUFT_Spike.Tools import FTICR_INTER as FI_tools
 
 metadata = Blueprint(
     "metadata",
@@ -38,7 +38,6 @@ def user_SeaDrive_path():
     user_seaDrive_path = os.path.join(os.getcwd(),"FTICR_DATA")
     return user_seaDrive_path
     
-
 @metadata.route('/select_project', methods=["POST","GET"])
 @login_required
 def select_project():
@@ -292,8 +291,10 @@ def config():
 
 @metadata.route("/comp_sizes", methods=["GET", "POST"])
 def comp_sizes():
-    
-    proc_spike.debug=1
+
+    if request.method == 'POST':
+        return make_response('method must be GET', 400)
+
     post_data = request.get_json()
     sizeF1 = int(post_data.get("sizeF1"))
     sizeF2 = int(post_data.get("sizeF2"))
@@ -319,3 +320,5 @@ def comp_sizes():
         "uncompressed_size":str(somme//1024//1024*8)}), 
         201
     )
+
+

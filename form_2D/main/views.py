@@ -9,4 +9,4 @@ main = Blueprint(
 
 @main.route("/", methods=["GET"])
 def index():
-    return redirect(url_for("metadata.select_project"))
+    return redirect(url_for("seafile_client.index"))

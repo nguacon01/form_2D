@@ -87,7 +87,7 @@ function get_values_sizemultipliers(){
         var sizeF1 = $("#sizeF1").val();
         var sizeF2 = $("#sizeF2").val();
         $.ajax({
-            type: "POST",
+            type: "GET",
             contentType: "application/json",
             data: JSON.stringify({
                 "m1":m1,

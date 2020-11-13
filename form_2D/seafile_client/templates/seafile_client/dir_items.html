@@ -1,0 +1,15 @@
+{% extends "metadata/layout.html" %}
+{% block content %}
+<div class="container not-home">
+    <h3>Directory: {{dir_name}}</h3>
+    <div class="col-md-6">
+        <ul class="list-group">
+            {% for item in data %}
+                <li class="list-group-item">
+                    <a href="{{url_for('seafile_client.edit_mscf', file_full_path=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, config_filename=item.name)}}">Edit {{item.name}}</a>                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+    
+{% endblock content %}

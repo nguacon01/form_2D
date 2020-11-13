@@ -1,0 +1,15 @@
+{% extends "metadata/layout.html" %}
+{% block content %}
+    <ul>
+        <h3>Repository: {{repo_name}}</h3>
+        {% for item in data %}
+        {{item}}
+        <li>
+            <a href="{{url_for('seafile_client.edit', parent_dir=item.parent_dir, path=item.path, repo_id=repo_id)}}">Edit {{item.name}}</a> /
+            <a href="{{url_for('seafile_client.upload_edited_file', repo_id=repo_id, filename=item.name, parent_dir=item.parent_dir)}}">Upload edited file</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <h3><a href="{{url_for('list_repositories')}}">Back to list of repositories</a></h3>
+    
+{% endblock content%}
