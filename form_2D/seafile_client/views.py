@@ -20,6 +20,7 @@ from form_2D.libs.custom_seafileapi.utils import seafile_token_require
 import json
 from form_2D.metadata.views import metadata
 from datetime import datetime
+import glob
 
 server = "https://cloud.seafile.com"
 
@@ -109,36 +110,68 @@ def dir_items():
             upstream_parent_dir = '/' + parent_dir.split('/')[1]
             if upstream_parent_dir == '/'+ dir_name:
                 data.append(item)
-    return render_template('seafile_client/dir_items.html', data=data, dir_name=dir_name)
-
-
-# @seafile_client.route('/list_config_files', methods = ['POST', 'GET'])
-# @seafile_token_require
-# def list_config_files():
-#     repo_id = request.args.get('repo_id','')
-#     client = custom_seafileapi.connect(server, token=session['seafile_token'])
-#     repo = client.repos.get_repo(repo_id)
-#     files = repo.get_files()
-#     return render_template('seafile_client/list_config_file.html', data=files, repo_id = repo_id, repo_name=repo.name)
+    return render_template('seafile_client/dir_items.html', data=data, dir_name=dir_name, repo_id=repo_id)
 
 def download_mscf_file(repo_id, file_full_path, parent_dir):
-    client = custom_seafileapi.connect(server, token=session['seafile_token'])
-    repo = client.repos.get_repo(repo_id)
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username, parent_dir.split('/')[1])
+
+    if file_full_path == '':
+        tmp_file_path = os.path.join(tmp_folder_path, 'new.mscf')
+        default_conf_file = os.path.join(metadata.root_path, "static", "files", "process2D.default.mscf")
+        with open(tmp_file_path, "w") as f:
+            with open(default_conf_file,'r') as data:
+                f.write(data.read())
+    else:
+        client = custom_seafileapi.connect(server, token=session['seafile_token'])
+        repo = client.repos.get_repo(repo_id)
+        if not os.path.exists(tmp_folder_path):
+            os.makedirs(tmp_folder_path)
+
+        file = repo.get_file(file_full_path, parent_dir)
+        download_file_link = file._get_download_link()
+        
+        file_name = file.name
+        tmp_file_path = os.path.join(tmp_folder_path, file_name)
+        file_content = requests.get(url=download_file_link, stream=True)
+        with open(tmp_file_path, "wb") as f:
+            for chunk in file_content.iter_lines():
+                f.write(chunk)
+                f.write(("\n").encode())
+    return tmp_file_path
+
+def load_method_file(repo_id, parent_dir):
     tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username, parent_dir.split('/')[1])
     if not os.path.exists(tmp_folder_path):
         os.makedirs(tmp_folder_path)
 
-    file = repo.get_file(file_full_path, parent_dir)
-    download_file_link = file._get_download_link()
-    
-    file_name = file.name
-    tmp_file_path = os.path.join(tmp_folder_path, file_name)
-    file_content = requests.get(url=download_file_link, stream=True)
-    with open(tmp_file_path, "wb") as f:
-        for chunk in file_content.iter_lines():
-            f.write(chunk)
-            f.write(("\n").encode())
-    return tmp_file_path
+    L = glob.glob(os.path.join(tmp_folder_path,"*",".method"))
+    if len(L) > 1:
+        raise Exception( "You have more than 1 apexAcquisition.method file in the %s folder, using the first one"%parent_dir)
+    elif len(L) == 1:
+        return L[0]
+    else:
+        client = custom_seafileapi.connect(server, token=session['seafile_token'])
+        repo = client.repos.get_repo(repo_id)
+        method_files = repo.get_items(type='f', recursive=1)
+        data = []
+        for file in method_files:
+            if file.name.endswith('.method') and file.type == 'file':
+                data.append(file)
+        if len(data) > 1:
+            raise Exception( "You have more than 1 apexAcquisition.method file in the %s folder, using the first one"%parent_dir )
+        elif len(data) < 1:
+            raise Exception( "You don't have any apexAcquisition.method file in the %s folder"%parent_dir )
+        else:
+            download_file_link = data[0]._get_download_link()
+            
+            file_name = data[0].name
+            tmp_file_path = os.path.join(tmp_folder_path, file_name)
+            file_content = requests.get(url=download_file_link, stream=True)
+            with open(tmp_file_path, "wb") as f:
+                for chunk in file_content.iter_lines():
+                    f.write(chunk)
+                    f.write(("\n").encode())
+            return tmp_file_path
 
 @seafile_client.route('/edit_mscf', methods=['GET', 'POST'])
 @seafile_token_require
@@ -149,8 +182,13 @@ def edit_mscf():
     config_filename = request.args.get('config_filename')
     parent_dir = request.args.get('parent_dir')
 
+    # load method file
+    local_method_file = load_method_file(repo_id, parent_dir)
+
     # download mscf file to local for editting and return local file path
     local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
+
+    
 
     local_project_path, config_filename = os.path.split(local_config_file_path)
     
@@ -178,54 +216,57 @@ def edit_mscf():
     # project_full_path = os.path.join(projects_root_folder_path, project_spath)
 
     # #####Information about the chosen project######
-    # project_dict = {}
+    project_dict = {}
 
     _, project_name = os.path.split(parent_dir)
 
     # project_dict['name'] = project_name
     # # create object
-    # FTICR_Data = FTICRData(dim=2)
+    FTICR_Data = FTICRData(dim=2)
     # ser_file_path = os.path.join(project_full_path,"ser")
     # ser_file_date_aquisition = os.path.getmtime(ser_file_path)
     # project_dict["ser_date_aquisition"] = datetime.fromtimestamp(ser_file_date_aquisition)
 
     # # find method file
     # param_filename = Solarix.locate_acquisition(project_full_path)
-    # params_method_file = Solarix.read_param(param_filename)
 
-    # # find Bo
-    # FTICR_Data.axis1.calibA = float(params_method_file["ML1"])
-    # FTICR_Data.axis2.calibA = float(params_method_file["ML1"])
-    # project_dict["Bo"] = round(FTICR_Data.Bo,2)
 
-    # # Import parameters : size in F1 and F2    
-    # sizeF1 = Solarix.read_scan(os.path.join(project_full_path,"scan.xml"))
-    # sizeF2 = int(params_method_file["TD"])
-    # project_dict["sizeF1"] = sizeF1//1024
-    # project_dict["sizeF2"] = sizeF2//1024
-    # project_dict["data_size"] = 4*sizeF1*sizeF2//(1024*1024) 
+
+    params_method_file = Solarix.read_param(local_method_file)
+
+    # find Bo
+    FTICR_Data.axis1.calibA = float(params_method_file["ML1"])
+    FTICR_Data.axis2.calibA = float(params_method_file["ML1"])
+    project_dict["Bo"] = round(FTICR_Data.Bo,2)
+
+    # Import parameters : size in F1 and F2    
+    sizeF1 = Solarix.read_scan(os.path.join(project_full_path,"scan.xml"))
+    sizeF2 = int(params_method_file["TD"])
+    project_dict["sizeF1"] = sizeF1//1024
+    project_dict["sizeF2"] = sizeF2//1024
+    project_dict["data_size"] = 4*sizeF1*sizeF2//(1024*1024) 
     
-    # # determine excitation window
-    # try:  #CR for compatibility with Apex format as there is no EXciteSweep file
-    #     fl,fh = Solarix.read_ExciteSweep(Solarix.locate_ExciteSweep(project_full_path))
-    #     freql, freqh = fl[0], fh[0]
-    # except:
-    #     freqh = float(params_method_file["EXC_hi"])
-    #     freql = float(params_method_file["EXC_low"])
-    # mzl = round(FTICR_Data.axis2.htomz(freql), 2)
-    # mzh = round(FTICR_Data.axis2.htomz(freqh), 2)
+    # determine excitation window
+    try:  #CR for compatibility with Apex format as there is no EXciteSweep file
+        fl,fh = Solarix.read_ExciteSweep(Solarix.locate_ExciteSweep(project_full_path))
+        freql, freqh = fl[0], fh[0]
+    except:
+        freqh = float(params_method_file["EXC_hi"])
+        freql = float(params_method_file["EXC_low"])
+    mzl = round(FTICR_Data.axis2.htomz(freql), 2)
+    mzh = round(FTICR_Data.axis2.htomz(freqh), 2)
 
-    # project_dict["freqh"] = freqh
-    # project_dict["freql"] = freql
-    # project_dict["mzh"] = mzh
-    # project_dict["mzl"] = mzl
+    project_dict["freqh"] = freqh
+    project_dict["freql"] = freql
+    project_dict["mzh"] = mzh
+    project_dict["mzl"] = mzl
 
-    # # show f2_specwidth
-    # f2_specwidth = float(params_method_file["SW_h"])
-    # lowmass = FTICR_Data.axis2.htomz(f2_specwidth)
-    # project_dict["f2_specwidth"] = f2_specwidth
-    # project_dict["lowmass"] = round(lowmass,2)
-    # #####END Information about the chosen project######
+    # show f2_specwidth
+    f2_specwidth = float(params_method_file["SW_h"])
+    lowmass = FTICR_Data.axis2.htomz(f2_specwidth)
+    project_dict["f2_specwidth"] = f2_specwidth
+    project_dict["lowmass"] = round(lowmass,2)
+    #####END Information about the chosen project######
     
 
     # default config file

@@ -12,3 +12,4 @@ form_2D/static/gen/
 env/
 app.sock
 custom_seafileapi
+form_2D/seafile_client/static/tmp
