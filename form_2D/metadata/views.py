@@ -295,11 +295,11 @@ def comp_sizes():
     if request.method == 'POST':
         return make_response('method must be GET', 400)
 
-    post_data = request.get_json()
-    sizeF1 = int(post_data.get("sizeF1"))
-    sizeF2 = int(post_data.get("sizeF2"))
-    m1 = float(post_data.get("m1"))
-    m2 = float(post_data.get("m2"))
+    # post_data = request.get_json()
+    sizeF1 = int(request.args.get("sizeF1"))
+    sizeF2 = int(request.args.get("sizeF2"))
+    m1 = float(request.args.get("m1"))
+    m2 = float(request.args.get("m2"))
     if not sizeF1 or not sizeF2 or not m1 or not m2:
         return make_response(jsonify({"msg":"Make sure you filled up sizemultipliers field", "status":"fail"}), 400)
     

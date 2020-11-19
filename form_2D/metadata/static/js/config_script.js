@@ -89,12 +89,12 @@ function get_values_sizemultipliers(){
         $.ajax({
             type: "GET",
             contentType: "application/json",
-            data: JSON.stringify({
+            data: {
                 "m1":m1,
                 "m2":m2,
                 "sizeF1":sizeF1*1024,
                 "sizeF2":sizeF2*1024
-            }),
+            },
             url: '/metadata/comp_sizes'
         })
         .always(function(res){

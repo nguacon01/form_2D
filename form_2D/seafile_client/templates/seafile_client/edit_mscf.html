@@ -27,7 +27,17 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="proj_info">
-                       <h3>Project info, still in dev</h3>
+                        <div class="col-md-12">
+                            <p><b>Project folder: </b>{{project_dict['name']}}</p>
+                            <p><b>Date of acquisition: </b>{{project_dict['ser_date_aquisition']}}</p>
+                            <p><b>Estimate Bo from internal calibration: </b>{{project_dict['Bo']}}T</p>
+                            <p><b>Experiment size (F1 x F2): </b>{{project_dict['sizeF1']}}k x {{project_dict['sizeF2']}}k</p>
+                            <input type="hidden" id='sizeF1' value="{{project_dict['sizeF1']}}">
+                            <input type="hidden" id='sizeF2' value="{{project_dict['sizeF2']}}">
+                            <p><b>Data size: </b>{{project_dict['data_size']}}MB</p>
+                            <p><b>Excitation pulses from</b> {{project_dict['freqh']}}Hz (m/z={{project_dict['mzh']}}) <b>to</b> {{project_dict['freql']}}Hz (m/z={{project_dict['mzl']}})</p>
+                            <p><b>Acquisition spectral width: </b>{{project_dict['f2_specwidth']}}Hz (low mass: {{project_dict['lowmass']}})</p>
+                        </div>
                     </div>
                 </div>
                 
