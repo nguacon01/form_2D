@@ -10,6 +10,7 @@ def compile_static_assets(assets):
         "css/offcanvas-main.css",
         "css/libs/fontawesome.min.css",
         "css/casc4de_typography.css",
+        "css/hover.css",
         "css/style.css",
         filters="cssmin",
         output="gen/main_style.css",

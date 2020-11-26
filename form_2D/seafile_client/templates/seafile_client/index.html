@@ -1,11 +1,18 @@
 {% extends "metadata/layout.html" %}
 {% block content %}
-    <h1>{{message}}</h1>
-    {% if current_user %}
-    <h3>welcome {{current_user}}</h3>
-    <p><a href="{{url_for('seafile_client.list_repositories')}}">List of Repositories</a></p>
-    <p><a href="{{url_for('seafile_client.logout')}}">Logout</a></p>
-    {% else %}
-    <p><a href="{{url_for('seafile_client.login')}}">Login</a></p>
-    {% endif %}
+<link href="{{url_for('seafile_client.static', filename = 'css/style.css')}}" rel="stylesheet">
+<div class="container not-home seafile-page">
+    <div class="col-md-6">
+        <h1>Greeting!!</h1>
+        {% if current_user %}
+        <h3>Welcome to SeaFile, {{current_user}}</h3>
+        <p class="list-repo"><a class="hvr-sweep-to-right" href="{{url_for('seafile_client.list_repositories')}}">List of Repositories</a></p>
+        <p class="logout-btn"><a href="{{url_for('seafile_client.logout')}}">Logout</a></p>
+        {% else %}
+        <p class="login-btn"><a href="{{url_for('seafile_client.login')}}">Login</a></p>
+        {% endif %}
+    </div>
+</div>
 {% endblock content%}
+
+

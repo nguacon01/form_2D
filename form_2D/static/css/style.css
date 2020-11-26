@@ -3,6 +3,9 @@
 ---------------- RESETS ---------------
 ---------------------------------------
 */
+ul{
+  list-style-type: none;
+}
 /*Visual composer*/
 .vc_row.container {
     margin-left: auto!important;
@@ -671,3 +674,21 @@
     margin-top:30px;
     margin-bottom: 50px;
   }
+.seafile-page li{
+  margin: 10px 0
+}
+.seafile-page a{
+  display:table-cell;
+  height:40px;
+  vertical-align: middle;
+  padding:0 10px;
+  width: 400px;
+  border: 1px solid #f59f00;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color:  #333;
+}
+.hvr-sweep-to-right::before{
+  background: #f59f00;
+  color:#fff
+}

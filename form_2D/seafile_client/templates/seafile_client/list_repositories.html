@@ -1,10 +1,15 @@
 {% extends "metadata/layout.html" %}
 {% block content %}
-    <ul>
+<div class="container not-home seafile-page">
+    <div class="col-md-6">
+        <h3>Repository: {{repo_name}}</h3>
+        <ul class="list-group">
         {{repo}}
         {% for repo in data %}
-        <li><a href="{{url_for('seafile_client.repo_items', repo_id=repo.id, repo_name=repo.name)}}">{{repo.name}}</a></li>
+        <li><a class="hvr-sweep-to-right" href="{{url_for('seafile_client.repo_items', repo_id=repo.id, repo_name=repo.name)}}">{{repo.name}}</a></li>
         {% endfor %}
     </ul>
+    </div>
+</div>
     
 {% endblock content%}

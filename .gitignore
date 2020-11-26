@@ -15,3 +15,5 @@ custom_seafileapi
 form_2D/seafile_client/static/tmp
 Untitled.ipynb
 .ipynb_checkpoints/Untitled-checkpoint.ipynb
+*tmp/
+form_2D/seafile_client/static/tmp/
