@@ -26,7 +26,7 @@ from urllib.parse import urlparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
-server = "https://10.18.0.2"
+server = "https://testdatams.casc4de.fr"
 # server = 'https://seafile.fticr-ms.eu'
 
 seafile_client = Blueprint(
