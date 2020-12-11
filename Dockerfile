@@ -2,7 +2,7 @@
 FROM python:3
 
 #create work directoy which contains app
-WORKDIR /app
+WORKDIR /form_2D
 
 # define flask app enviroment variables
 # ENV ENV_DO_MANH_DUNG domanhdung
@@ -31,7 +31,8 @@ COPY . .
 EXPOSE 5000
 
 # #run app in container
-CMD [ "python","run.py" ]
+# CMD [ "python","run.py" ]
+ENTRYPOINT ["sh", "entrypoint.sh"]
 
 # The code to run when container is started:
 # COPY run.py .

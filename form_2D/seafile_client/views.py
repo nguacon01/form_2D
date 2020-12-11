@@ -26,8 +26,9 @@ from urllib.parse import urlparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
-server = "https://10.18.0.2"
+# server = "https://10.18.0.2"
 # server = 'https://seafile.fticr-ms.eu'
+server = 'https://testdatams.casc4de.fr'
 
 seafile_client = Blueprint(
     "seafile_client",
@@ -43,6 +44,7 @@ def index():
     return render_template('seafile_client/index.html', message='this is a page of seafile api', current_user=session['current_user'])
 
 @seafile_client.route('/login', methods = ['POST', 'GET'])
+@login_required
 def login():
     """
     Login page
@@ -67,8 +69,7 @@ def login():
         response = requests.post(
             url=request_token_url,
             data=_data,
-            headers=_headers,
-            verify=False
+            headers=_headers
         )
         if response.status_code == 200:
             content = json.loads(response.text)
@@ -81,13 +82,14 @@ def login():
 
 
 @seafile_client.route('/list_repositories')
+@login_required
 @seafile_token_require
 def list_repositories():
     """
     get list of all repositories in seafile server
 
     """
-    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
     list_repos = client.repos.list_repos(type="mine")
     if len(list_repos) < 1:
         return "You dont have any repository"
@@ -102,7 +104,7 @@ def repo_items():
     """
     repo_id = request.args.get('repo_id')
     repo_name = request.args.get('repo_name')
-    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
     repo = client.repos.get_repo(repo_id)
 
     #return array of SeafDir objects
@@ -123,7 +125,7 @@ def dir_items():
     dir_name = request.args.get('dir_name')
     parent_dir = request.args.get('parent_dir')
     # connect to seafile server
-    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
     # get repository data
     repo = client.repos.get_repo(repo_id)
     # create dir object
@@ -156,7 +158,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     # else, mscf file exists in seafile server
     else:
         # connect to seafile server
-        client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+        client = custom_seafileapi.connect(server, token=session['seafile_token'])
         # get repo
         repo = client.repos.get_repo(repo_id)
         # check if temp local folder existed or not. if not, creat temp local folder
@@ -175,7 +177,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
         
         file_name = file.name
         tmp_file_path = os.path.join(tmp_folder_path, file_name)
-        file_content = requests.get(url=re_download_file_link, stream=True, verify=False)
+        file_content = requests.get(url=re_download_file_link, stream=True)
         # write mscf file into local file
         with open(tmp_file_path, "wb") as f:
             for chunk in file_content.iter_lines():
@@ -208,7 +210,7 @@ def load_corresponse_files(repo_id, parent_dir):
         return corresponse_files
     else:
         # if there is not a file, then we load it from seafile server
-        client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+        client = custom_seafileapi.connect(server, token=session['seafile_token'])
         repo = client.repos.get_repo(repo_id)
         method_files = repo.get_items(type='f', recursive=1)
         data = []
@@ -232,7 +234,7 @@ def load_corresponse_files(repo_id, parent_dir):
                 
                 file_name = item.name
                 tmp_file_path = os.path.join(tmp_folder_path, file_name)
-                file_content = requests.get(url=re_download_file_link, stream=True, verify=False)
+                file_content = requests.get(url=re_download_file_link, stream=True)
                 with open(tmp_file_path, "wb") as f:
                     for chunk in file_content.iter_lines():
                         f.write(chunk)
@@ -456,6 +458,10 @@ def edit_mscf():
         # allow user to download it
         # return send_from_directory(directory=local_project_path, filename=save_file_name, as_attachment=True)
 
+        #remove temp file
+        os.remove(save_file_path)
+
+
     return render_template(
         "seafile_client/edit_mscf.html",
         config_dict = config_dict,
@@ -478,7 +484,7 @@ def get_upload_link(_repo_id, parent_dir):
         'Authorization':'Token {}'.format(session['seafile_token'])
     }
 
-    upload_link_response = requests.get(url=request_upload_link, headers=_headers, verify=False)
+    upload_link_response = requests.get(url=request_upload_link, headers=_headers)
     if upload_link_response.status_code == 200:
         upload_link = json.loads(upload_link_response.text)
 
@@ -516,7 +522,7 @@ def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
         "file":open(local_file_path, "r")
     }
 
-    response = requests.post(url=upload_link, headers=_headers, data=_data, files=_files, verify=False)
+    response = requests.post(url=upload_link, headers=_headers, data=_data, files=_files)
     if response.status_code == 200:
         return response.text
     else:
