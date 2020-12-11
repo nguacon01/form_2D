@@ -1,5 +1,5 @@
 # download main image from docker hub
-FROM python:3
+FROM python:3.8.6
 
 #create work directoy which contains app
 WORKDIR /form_2D
@@ -13,12 +13,6 @@ ENV MYSQL_USER mddo
 ENV MYSQL_PASSWORD dung123
 
 #install app dependenccies
-# COPY environment.yml .
-
-# RUN conda env create -f environment.yml
-
-# Make RUN commands use the new environment:
-# SHELL ["conda", "run", "-n", "nguacon01", "/bin/bash", "-c"]
 
 COPY requirements.txt requirements.txt
 
@@ -33,7 +27,3 @@ EXPOSE 5000
 # #run app in container
 # CMD [ "python","run.py" ]
 ENTRYPOINT ["sh", "entrypoint.sh"]
-
-# The code to run when container is started:
-# COPY run.py .
-# ENTRYPOINT ["conda", "run", "-n", "nguacon01", "python", "run.py"]
