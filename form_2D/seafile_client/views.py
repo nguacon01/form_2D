@@ -26,8 +26,10 @@ from urllib.parse import urlparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
-server = "https://10.18.0.2"
+# server = "https://10.18.0.2"
 # server = 'https://seafile.fticr-ms.eu'
+# server = 'https://seafile.unistra.fr'
+server = "https://testdatams.casc4de.fr"
 
 seafile_client = Blueprint(
     "seafile_client",
@@ -250,15 +252,14 @@ def edit_mscf():
     config_filename = request.args.get('config_filename')
     parent_dir = request.args.get('parent_dir')
 
+    # download mscf file to local for editting and return local file path
+    local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
+
     # load method file
     local_corresponse_files = load_corresponse_files(repo_id, parent_dir)
     local_method_file = local_corresponse_files['apexAcquisition.method']
     local_excitesweep_file = local_corresponse_files['ExciteSweep']
     local_scan_file = local_corresponse_files['scan.xml']
-
-
-    # download mscf file to local for editting and return local file path
-    local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
 
     local_project_path, config_filename = os.path.split(local_config_file_path)
     

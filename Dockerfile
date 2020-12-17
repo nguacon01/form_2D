@@ -2,7 +2,7 @@
 FROM python:3
 
 #create work directoy which contains app
-WORKDIR /app
+WORKDIR /form_2D
 
 # define flask app enviroment variables
 # ENV ENV_DO_MANH_DUNG domanhdung
@@ -19,6 +19,7 @@ ENV MYSQL_PASSWORD dung123
 
 # Make RUN commands use the new environment:
 # SHELL ["conda", "run", "-n", "nguacon01", "/bin/bash", "-c"]
+RUN pip install --upgrade pip
 
 COPY requirements.txt requirements.txt
 
@@ -31,7 +32,7 @@ COPY . .
 EXPOSE 5000
 
 # #run app in container
-CMD [ "python","run.py" ]
+CMD [ "sh","entrypoint.sh" ]
 
 # The code to run when container is started:
 # COPY run.py .
