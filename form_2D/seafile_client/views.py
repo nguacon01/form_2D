@@ -14,9 +14,9 @@ from datetime import datetime
 from form_2D.libs.EUFT_Spike import processing_4EU as proc_spike
 from form_2D.libs.EUFT_Spike.Tools import FTICR_INTER as FI_tools
 
-from form_2D.libs import custom_seafileapi
-from form_2D.libs.custom_seafileapi.files import SeafDir
-from form_2D.libs.custom_seafileapi.utils import seafile_token_require
+from form_2D.libs.seafile_api import custom_seafileapi
+from form_2D.libs.seafile_api.custom_seafileapi.files import SeafDir
+from form_2D.libs.seafile_api.custom_seafileapi.utils import seafile_token_require
 import json
 from form_2D.metadata.views import metadata
 from datetime import datetime
@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 
 # server = "https://10.18.0.2"
 # server = 'https://seafile.fticr-ms.eu'
-server = 'https://testdatams.casc4de.fr'
+server = 'https://dung.casc4de.fr'
 
 seafile_client = Blueprint(
     "seafile_client",
@@ -169,6 +169,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
         file = repo.get_file(file_full_path, parent_dir)
         # get mscf file download link
         download_file_link = file._get_download_link()
+        # return download_file_link
 
         # in dev: fix bug can not connect to host: 
         # urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='seafile.fticr-ms.eu', port=443)
@@ -246,11 +247,19 @@ def load_corresponse_files(repo_id, parent_dir):
 @seafile_client.route('/edit_mscf', methods=['GET', 'POST'])
 @seafile_token_require
 def edit_mscf():
+    """
+    author: DMD - casc4de
+    This function help us to modify an existed config file - mscf or also creates a new one.
+    """
     repo_id = request.args.get("repo_id")
     file_full_path = request.args.get('file_full_path')
     # return file_full_path
     config_filename = request.args.get('config_filename')
     parent_dir = request.args.get('parent_dir')
+
+    # download mscf file to local for editting and return local file path
+    local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
+    # return local_config_file_path
 
     # load method file
     local_corresponse_files = load_corresponse_files(repo_id, parent_dir)
@@ -258,17 +267,8 @@ def edit_mscf():
     local_excitesweep_file = local_corresponse_files['ExciteSweep']
     local_scan_file = local_corresponse_files['scan.xml']
 
-
-    # download mscf file to local for editting and return local file path
-    local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
-
     local_project_path, config_filename = os.path.split(local_config_file_path)
     
-
-    """
-    author: DMD - casc4de
-    This function help us to modify an existed config file - mscf or also creates a new one.
-    """
 
     # # create experiment config form
     form = ConfigForm()
@@ -349,16 +349,20 @@ def edit_mscf():
         try:
             config.readfp(open(local_config_file_path, 'r'))
         except Exception:
-            return render_template("errors/404.html", message="There are some attributes which are duplicated. Check again.")
+            return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
         # load config data into proc_params object
+        # test all sections are present for a valid file
+        test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
+        if test  != [True, True, True]:
+            return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
         proc_params.load(config)
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
         # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
-        config_dict['highmass'] = config['import']['highmass']
+        config_dict['highmass'] = config.getfloat( "import", 'highmass', 0.0)
         # set config_dict['F1_specwidth'] = F1_specwidth in the the existed config file
-        config_dict['F1_specwidth'] = config['import']['F1_specwidth']
-        config_dict['sizemultipliers'] = config['processing']['sizemultipliers']
+        config_dict['F1_specwidth'] = config.getfloat( "import", 'F1_specwidth', 0.0)
+        config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', proc_params.szmlist)
         # return config_dict
     else:
         proc_params.load(default_config)
@@ -461,7 +465,6 @@ def edit_mscf():
         #remove temp file
         os.remove(save_file_path)
 
-
     return render_template(
         "seafile_client/edit_mscf.html",
         config_dict = config_dict,
@@ -527,6 +530,25 @@ def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
         return response.text
     else:
         return response.text
+
+@seafile_client.route('/del_file/', methods=['DELETE'])
+def del_file():
+    repo_id = request.args.get('repo_id')
+    full_path = request.args.get('full_path')
+
+    if not repo_id:
+        return "repo_id is not found"
+    request_upload_link = server+f"/api2/repos/{repo_id}/file/?p={full_path}"
+
+    _headers = {
+        'Authorization':'Token {}'.format(session['seafile_token'])
+    }
+
+    upload_link_response = requests.get(url=request_upload_link, headers=_headers)
+    if upload_link_response.status_code == 200:
+        return jsonify('delete completed', 200)
+    else:
+        return "something went wrong"
 
 @seafile_client.route('/test')
 def search_file():

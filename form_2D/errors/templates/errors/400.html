@@ -1,0 +1,18 @@
+{% extends "main/layout.html" %}
+{% block content %}
+<link rel='stylesheet' id='' href='{{url_for("static", filename="css/errors_style.css")}}'media='all' />
+<div id="notfound">
+    <div class="notfound">
+        <div class="notfound-404">
+            <h1>400</h1>
+        </div>
+        <h2>Bad Request</h2>
+        {% if message %}
+            <p>{{ message }}</p>
+        {% else %}
+            <p>Please double check your request</p>
+        {% endif %}
+        <a href="/">Go To Homepage</a>
+    </div>
+</div>
+{% endblock content %}
