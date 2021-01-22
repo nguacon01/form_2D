@@ -1,5 +1,6 @@
 import os
 import datetime
+from datetime import timedelta
 
 class Config(object):
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -9,7 +10,10 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "site.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_TOKEN_LOCATION = "cookies"
-    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=30)
+    #timeout jwt
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
+    #timeout session
+    PERMANENT_SESSION_LIFETIME =  timedelta(minutes=30)
     
 
 class ProductionConfig(Config):

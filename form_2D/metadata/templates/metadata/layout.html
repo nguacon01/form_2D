@@ -37,11 +37,27 @@ Author :
                                         src="{{url_for('metadata.static', filename = 'img/eufticr_whitelogo.png')}}"
                                         style="width:auto;height:60px" /></a>
                             </p>
+                            
                         </div>
-                        <div class="col-md-6" style="text-align: center">
+                        <div class="col-md-9" style="text-align: center">
                             <p style="color:white;font-size: 11px" class="navbar-text">
                                 <a></a>
                             </p>
+                            <p class="btn-logout"><a href='{{url_for("seafile_client.logout")}}'>Log out<i class='fa fa-plus'></i></a></p>
+                            <style>
+                                .btn-logout{
+                                    border:solid 1px #fff;
+                                    text-align: center;
+                                    padding: 10px;
+                                    margin: 20px auto;
+                                    float: right;
+                                }
+                                .btn-logout > a{
+                                    color:#fff;
+                                    font-size: 14px;
+                                    display: inline-block
+                                }
+                            </style>
                         </div>
                         <!-- <div class="col-md-3" style="text-align: right;padding: 20px">
                             <div class="buttons">
@@ -68,6 +84,7 @@ Author :
                                         style=" vertical-align: sub !important;">Are you sure?</strong></p>
                                 <button type="button" class="close" data-dismiss="modal"
                                     aria-hidden="true">&times;</button>
+                                    
                             </div>
                             <div class="modal-body">
                                 <p style="font-size: 20px">You are on the point to quit the Metadata form, was it your
@@ -103,6 +120,7 @@ Author :
                             <a href="http://www.casc4de.eu/"><img alt="Bootstrap Image Preview"
                                     src="{{url_for('metadata.static', filename = 'img/casc4de_logo_complete.png')}}"
                                     style="width:auto;height:20px" /></a>
+                            <button>Log out<i class='fa fa-plus'></i></button>
                         </p>
                     </div>
                     <div class="col-md-3 col-12" style="text-align: right;padding-top: 15px">
@@ -114,6 +132,7 @@ Author :
                             <a href="https://twitter.com/_casc4de_"><img
                                     src="{{url_for('metadata.static', filename = 'img/Twitter_Bird.png')}}"
                                     style="width:auto;height:20px;padding-right: 2px;padding-left: 2px" /></a>
+                            <button>Log out<i class='fa fa-plus'></i></button>
                         </p>
                     </div>
                 </div>

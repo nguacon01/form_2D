@@ -688,6 +688,13 @@ ul{
   box-sizing: border-box;
   color:  #333;
 }
+.seafile-page a.del_mscf_file{
+  display:table-cell;
+  height:40px;
+  vertical-align: middle;
+  padding:0 10px;
+  width: 400px;
+}
 .hvr-sweep-to-right::before{
   background: #f59f00;
   color:#fff

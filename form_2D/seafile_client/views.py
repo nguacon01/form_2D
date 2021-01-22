@@ -14,9 +14,9 @@ from datetime import datetime
 from form_2D.libs.EUFT_Spike import processing_4EU as proc_spike
 from form_2D.libs.EUFT_Spike.Tools import FTICR_INTER as FI_tools
 
-from form_2D.libs import custom_seafileapi
-from form_2D.libs.custom_seafileapi.files import SeafDir
-from form_2D.libs.custom_seafileapi.utils import seafile_token_require
+from form_2D.libs.seafile_api import custom_seafileapi
+from form_2D.libs.seafile_api.custom_seafileapi.files import SeafDir
+from form_2D.libs.seafile_api.custom_seafileapi.utils import seafile_token_require
 import json
 from form_2D.metadata.views import metadata
 from datetime import datetime
@@ -26,10 +26,11 @@ from urllib.parse import urlparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import shutil
+
 # server = "https://10.18.0.2"
 # server = 'https://seafile.fticr-ms.eu'
-# server = 'https://seafile.unistra.fr'
-server = "https://testdatams.casc4de.fr"
+server = 'https://dung.casc4de.fr'
 
 seafile_client = Blueprint(
     "seafile_client",
@@ -45,6 +46,7 @@ def index():
     return render_template('seafile_client/index.html', message='this is a page of seafile api', current_user=session['current_user'])
 
 @seafile_client.route('/login', methods = ['POST', 'GET'])
+@login_required
 def login():
     """
     Login page
@@ -69,8 +71,7 @@ def login():
         response = requests.post(
             url=request_token_url,
             data=_data,
-            headers=_headers,
-            verify=False
+            headers=_headers
         )
         if response.status_code == 200:
             content = json.loads(response.text)
@@ -83,13 +84,14 @@ def login():
 
 
 @seafile_client.route('/list_repositories')
+@login_required
 @seafile_token_require
 def list_repositories():
     """
     get list of all repositories in seafile server
 
     """
-    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
     list_repos = client.repos.list_repos(type="mine")
     if len(list_repos) < 1:
         return "You dont have any repository"
@@ -104,7 +106,7 @@ def repo_items():
     """
     repo_id = request.args.get('repo_id')
     repo_name = request.args.get('repo_name')
-    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
     repo = client.repos.get_repo(repo_id)
 
     #return array of SeafDir objects
@@ -125,7 +127,7 @@ def dir_items():
     dir_name = request.args.get('dir_name')
     parent_dir = request.args.get('parent_dir')
     # connect to seafile server
-    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
     # get repository data
     repo = client.repos.get_repo(repo_id)
     # create dir object
@@ -158,7 +160,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     # else, mscf file exists in seafile server
     else:
         # connect to seafile server
-        client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+        client = custom_seafileapi.connect(server, token=session['seafile_token'])
         # get repo
         repo = client.repos.get_repo(repo_id)
         # check if temp local folder existed or not. if not, creat temp local folder
@@ -169,6 +171,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
         file = repo.get_file(file_full_path, parent_dir)
         # get mscf file download link
         download_file_link = file._get_download_link()
+        # return download_file_link
 
         # in dev: fix bug can not connect to host: 
         # urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='seafile.fticr-ms.eu', port=443)
@@ -177,7 +180,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
         
         file_name = file.name
         tmp_file_path = os.path.join(tmp_folder_path, file_name)
-        file_content = requests.get(url=re_download_file_link, stream=True, verify=False)
+        file_content = requests.get(url=re_download_file_link, stream=True)
         # write mscf file into local file
         with open(tmp_file_path, "wb") as f:
             for chunk in file_content.iter_lines():
@@ -210,7 +213,7 @@ def load_corresponse_files(repo_id, parent_dir):
         return corresponse_files
     else:
         # if there is not a file, then we load it from seafile server
-        client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+        client = custom_seafileapi.connect(server, token=session['seafile_token'])
         repo = client.repos.get_repo(repo_id)
         method_files = repo.get_items(type='f', recursive=1)
         data = []
@@ -234,7 +237,7 @@ def load_corresponse_files(repo_id, parent_dir):
                 
                 file_name = item.name
                 tmp_file_path = os.path.join(tmp_folder_path, file_name)
-                file_content = requests.get(url=re_download_file_link, stream=True, verify=False)
+                file_content = requests.get(url=re_download_file_link, stream=True)
                 with open(tmp_file_path, "wb") as f:
                     for chunk in file_content.iter_lines():
                         f.write(chunk)
@@ -246,6 +249,10 @@ def load_corresponse_files(repo_id, parent_dir):
 @seafile_client.route('/edit_mscf', methods=['GET', 'POST'])
 @seafile_token_require
 def edit_mscf():
+    """
+    author: DMD - casc4de
+    This function help us to modify an existed config file - mscf or also creates a new one.
+    """
     repo_id = request.args.get("repo_id")
     file_full_path = request.args.get('file_full_path')
     # return file_full_path
@@ -254,6 +261,7 @@ def edit_mscf():
 
     # download mscf file to local for editting and return local file path
     local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
+    # return local_config_file_path
 
     # load method file
     local_corresponse_files = load_corresponse_files(repo_id, parent_dir)
@@ -263,11 +271,6 @@ def edit_mscf():
 
     local_project_path, config_filename = os.path.split(local_config_file_path)
     
-
-    """
-    author: DMD - casc4de
-    This function help us to modify an existed config file - mscf or also creates a new one.
-    """
 
     # # create experiment config form
     form = ConfigForm()
@@ -348,16 +351,22 @@ def edit_mscf():
         try:
             config.readfp(open(local_config_file_path, 'r'))
         except Exception:
-            return render_template("errors/404.html", message="There are some attributes which are duplicated. Check again.")
+            return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
         # load config data into proc_params object
+        # test all sections are present for a valid file
+        test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
+        if test  != [True, True, True]:
+            return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
         proc_params.load(config)
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
         # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
-        config_dict['highmass'] = config['import']['highmass']
+        config_dict['highmass'] = config.getfloat( "import", 'highmass', 0.0)
         # set config_dict['F1_specwidth'] = F1_specwidth in the the existed config file
-        config_dict['F1_specwidth'] = config['import']['F1_specwidth']
-        config_dict['sizemultipliers'] = config['processing']['sizemultipliers']
+        config_dict['F1_specwidth'] = config.getfloat( "import", 'F1_specwidth', 0.0)
+        # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
+        szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
+        config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
         # return config_dict
     else:
         proc_params.load(default_config)
@@ -457,6 +466,9 @@ def edit_mscf():
         # allow user to download it
         # return send_from_directory(directory=local_project_path, filename=save_file_name, as_attachment=True)
 
+        #remove temp file
+        os.remove(save_file_path)
+
     return render_template(
         "seafile_client/edit_mscf.html",
         config_dict = config_dict,
@@ -479,7 +491,7 @@ def get_upload_link(_repo_id, parent_dir):
         'Authorization':'Token {}'.format(session['seafile_token'])
     }
 
-    upload_link_response = requests.get(url=request_upload_link, headers=_headers, verify=False)
+    upload_link_response = requests.get(url=request_upload_link, headers=_headers)
     if upload_link_response.status_code == 200:
         upload_link = json.loads(upload_link_response.text)
 
@@ -517,11 +529,31 @@ def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
         "file":open(local_file_path, "r")
     }
 
-    response = requests.post(url=upload_link, headers=_headers, data=_data, files=_files, verify=False)
+    response = requests.post(url=upload_link, headers=_headers, data=_data, files=_files)
     if response.status_code == 200:
         return response.text
     else:
         return response.text
+
+@seafile_client.route('/del_file')
+def del_file():
+    repo_id = request.args.get('repo_id')
+    full_path = request.args.get('full_path')
+
+    if not repo_id:
+        return "repo_id is not found"
+    request_upload_link = server+f"/api2/repos/{repo_id}/file/?p={full_path}"
+
+    _headers = {
+        'Authorization':'Token {}'.format(session['seafile_token']),
+        'Accept' : 'application/json; charset=utf-8; indent=4'
+    }
+
+    upload_link_response = requests.delete(url=request_upload_link, headers=_headers)
+    if upload_link_response.status_code == 200:
+        return jsonify(str(upload_link_response.content), 200)
+    else:
+        return "something went wrong"
 
 @seafile_client.route('/test')
 def search_file():
@@ -538,8 +570,18 @@ def search_file():
 
 @seafile_client.route('/logout')
 def logout():
-    session['current_user'] = ''
+    """
+    after user logout, their files in tmp folder will be deleted
+    """
+    # session['current_user'] = ''
+    user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username)
+    # return user_tmp_dir
+    if os.path.isdir(user_tmp_dir):
+        shutil.rmtree(user_tmp_dir)
+    else:
+        return 'there is no folder user'
     session['seafile_token'] = ''
+    
     return redirect(url_for('seafile_client.index'))
 
 @seafile_client.route('/visual', methods=['POST', 'GET'])

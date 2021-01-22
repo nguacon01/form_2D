@@ -2,4 +2,6 @@
 env/
 *__pycache__*
 *.pyc
-.ipynb_checkpoints/
+form_2D/libs/custom_seafileapi/
+form_2D/libs/EUFT_Spike/
+form_2D/libs/FileStreaming.py

@@ -111,3 +111,4 @@ webencodings==0.5.1
 Werkzeug==1.0.1
 widgetsnbextension==3.5.1
 WTForms==2.3.3
+pandas==1.1.5
