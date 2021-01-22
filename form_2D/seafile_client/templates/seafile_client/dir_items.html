@@ -6,8 +6,7 @@
         <ul class="list-group">
             {% for item in data %}
                 <li class="">
-                    <a class="hvr-sweep-to-right mscf_file" href="{{url_for('seafile_client.edit_mscf', file_full_path=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, config_filename=item.name)}}">Edit {{item.name}}</a>    
-                    <a class='del_mscf_file' href="{{url_for('seafile_client.del_file', repo_id=item.repo.id, full_path=item.full_path)}}">Delete file</a>       
+                    <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.edit_mscf', file_full_path=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, config_filename=item.name)}}">Edit {{item.name}}</a>       
                 </li>
             {% endfor %}
                 <li class="">

@@ -2841,3 +2841,263 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.8/site-packages/gunicorn/http/message.py", line 73, in parse_headers
     remote_addr = self.unreader.sock.getpeername()
 OSError: [Errno 107] Transport endpoint is not connected
+[2021-01-19 10:35:23 +0000] [1165] [ERROR] Error handling request /seafile_client/dir_items?repo_id=cb91e552-a18d-4d22-947c-4233df112d62&oid=ebe90b3601cb0c691f1c465e3968df644f1f09ca&dir_name=BSA.d&dir_fullpath=%2FBSA.d%2F&dir_path=%2FBSA.d&parent_dir=%2F
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 271, in handle
+    keepalive = self.handle_request(req, conn)
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 320, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2464, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2450, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1867, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/form_2D/form_2D/seafile_client/views.py", line 128, in dir_items
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
+  File "/usr/local/lib/python3.8/site-packages/werkzeug/local.py", line 377, in <lambda>
+    __getitem__ = lambda x, i: x._get_current_object()[i]
+  File "/usr/local/lib/python3.8/site-packages/flask/sessions.py", line 84, in __getitem__
+    return super(SecureCookieSession, self).__getitem__(key)
+KeyError: 'seafile_token'
+[2021-01-19 10:35:26 +0000] [1165] [ERROR] Error handling request /seafile_client/dir_items?repo_id=cb91e552-a18d-4d22-947c-4233df112d62&oid=ebe90b3601cb0c691f1c465e3968df644f1f09ca&dir_name=BSA.d&dir_fullpath=%2FBSA.d%2F&dir_path=%2FBSA.d&parent_dir=%2F
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 271, in handle
+    keepalive = self.handle_request(req, conn)
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 320, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2464, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2450, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1867, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/form_2D/form_2D/seafile_client/views.py", line 128, in dir_items
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
+  File "/usr/local/lib/python3.8/site-packages/werkzeug/local.py", line 377, in <lambda>
+    __getitem__ = lambda x, i: x._get_current_object()[i]
+  File "/usr/local/lib/python3.8/site-packages/flask/sessions.py", line 84, in __getitem__
+    return super(SecureCookieSession, self).__getitem__(key)
+KeyError: 'seafile_token'
+[2021-01-19 10:44:18 +0000] [1] [CRITICAL] WORKER TIMEOUT (pid:1235)
+[2021-01-19 10:46:32 +0000] [1337] [ERROR] Error handling request /seafile_client/del_file?repo_id=cb91e552-a18d-4d22-947c-4233df112d62&full_path=%2FBSA.d%2Fasdasd.mscf%2F
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 271, in handle
+    keepalive = self.handle_request(req, conn)
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 320, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2464, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2450, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1867, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/form_2D/form_2D/seafile_client/views.py", line 549, in del_file
+    return jsonify(upload_link_response.content, 200)
+  File "/usr/local/lib/python3.8/site-packages/flask/json/__init__.py", line 370, in jsonify
+    dumps(data, indent=indent, separators=separators) + "\n",
+  File "/usr/local/lib/python3.8/site-packages/flask/json/__init__.py", line 211, in dumps
+    rv = _json.dumps(obj, **kwargs)
+  File "/usr/local/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/local/lib/python3.8/json/encoder.py", line 201, in encode
+    chunks = list(chunks)
+  File "/usr/local/lib/python3.8/json/encoder.py", line 429, in _iterencode
+    yield from _iterencode_list(o, _current_indent_level)
+  File "/usr/local/lib/python3.8/json/encoder.py", line 325, in _iterencode_list
+    yield from chunks
+  File "/usr/local/lib/python3.8/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/usr/local/lib/python3.8/site-packages/flask/json/__init__.py", line 100, in default
+    return _json.JSONEncoder.default(self, o)
+  File "/usr/local/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[2021-01-19 10:47:23 +0000] [1318] [ERROR] Error handling request /seafile_client/del_file?repo_id=cb91e552-a18d-4d22-947c-4233df112d62&full_path=%2FBSA.d%2Fasdasd.mscf%2F
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 271, in handle
+    keepalive = self.handle_request(req, conn)
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 320, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2464, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2450, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1867, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/form_2D/form_2D/seafile_client/views.py", line 549, in del_file
+    return jsonify(str(upload_link_response.content), 200)
+  File "/usr/local/lib/python3.8/site-packages/flask/json/__init__.py", line 370, in jsonify
+    dumps(data, indent=indent, separators=separators) + "\n",
+  File "/usr/local/lib/python3.8/site-packages/flask/json/__init__.py", line 211, in dumps
+    rv = _json.dumps(obj, **kwargs)
+  File "/usr/local/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/local/lib/python3.8/json/encoder.py", line 201, in encode
+    chunks = list(chunks)
+  File "/usr/local/lib/python3.8/json/encoder.py", line 429, in _iterencode
+    yield from _iterencode_list(o, _current_indent_level)
+  File "/usr/local/lib/python3.8/json/encoder.py", line 325, in _iterencode_list
+    yield from chunks
+  File "/usr/local/lib/python3.8/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/usr/local/lib/python3.8/site-packages/flask/json/__init__.py", line 100, in default
+    return _json.JSONEncoder.default(self, o)
+  File "/usr/local/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[2021-01-19 11:09:32 +0000] [1527] [ERROR] Error handling request /seafile_client/dir_items?repo_id=cb91e552-a18d-4d22-947c-4233df112d62&oid=ebe90b3601cb0c691f1c465e3968df644f1f09ca&dir_name=BSA.d&dir_fullpath=%2FBSA.d%2F&dir_path=%2FBSA.d&parent_dir=%2F
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 271, in handle
+    keepalive = self.handle_request(req, conn)
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 320, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2464, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2450, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1867, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/form_2D/form_2D/seafile_client/views.py", line 128, in dir_items
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
+  File "/usr/local/lib/python3.8/site-packages/werkzeug/local.py", line 377, in <lambda>
+    __getitem__ = lambda x, i: x._get_current_object()[i]
+  File "/usr/local/lib/python3.8/site-packages/flask/sessions.py", line 84, in __getitem__
+    return super(SecureCookieSession, self).__getitem__(key)
+KeyError: 'seafile_token'
+[2021-01-19 11:09:36 +0000] [1522] [ERROR] Error handling request /seafile_client/dir_items?repo_id=cb91e552-a18d-4d22-947c-4233df112d62&oid=ebe90b3601cb0c691f1c465e3968df644f1f09ca&dir_name=BSA.d&dir_fullpath=%2FBSA.d%2F&dir_path=%2FBSA.d&parent_dir=%2F
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 271, in handle
+    keepalive = self.handle_request(req, conn)
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 320, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2464, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2450, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1867, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/form_2D/form_2D/seafile_client/views.py", line 128, in dir_items
+    client = custom_seafileapi.connect(server, token=session['seafile_token'])
+  File "/usr/local/lib/python3.8/site-packages/werkzeug/local.py", line 377, in <lambda>
+    __getitem__ = lambda x, i: x._get_current_object()[i]
+  File "/usr/local/lib/python3.8/site-packages/flask/sessions.py", line 84, in __getitem__
+    return super(SecureCookieSession, self).__getitem__(key)
+KeyError: 'seafile_token'
+[2021-01-22 12:14:01 +0000] [1205] [CRITICAL] WORKER TIMEOUT (pid:495)
+[2021-01-22 12:14:01 +0000] [1] [CRITICAL] WORKER TIMEOUT (pid:1521)
+[2021-01-22 12:17:03 +0000] [1666] [ERROR] Error handling request /seafile_client/edit_mscf?repo_id=cb91e552-a18d-4d22-947c-4233df112d62&file_full_path=%2FBSA.d%2Fmad_1.mscf%2F&parent_dir=%2FBSA.d&config_filename=mad_1.mscf
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 271, in handle
+    keepalive = self.handle_request(req, conn)
+  File "/usr/local/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 320, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2464, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2450, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1867, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/form_2D/form_2D/libs/seafile_api/custom_seafileapi/utils.py", line 73, in wrapper
+    return func(*args, **kwargs)
+  File "/form_2D/form_2D/seafile_client/views.py", line 366, in edit_mscf
+    szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
+TypeError: unsupported operand type(s) for +: 'float' and 'str'

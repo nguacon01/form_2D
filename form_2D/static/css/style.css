@@ -677,7 +677,7 @@ ul{
 .seafile-page li{
   margin: 10px 0
 }
-.seafile-page a.mscf_file{
+.seafile-page a{
   display:table-cell;
   height:40px;
   vertical-align: middle;

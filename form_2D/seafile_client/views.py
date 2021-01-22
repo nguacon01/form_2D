@@ -362,7 +362,9 @@ def edit_mscf():
         config_dict['highmass'] = config.getfloat( "import", 'highmass', 0.0)
         # set config_dict['F1_specwidth'] = F1_specwidth in the the existed config file
         config_dict['F1_specwidth'] = config.getfloat( "import", 'F1_specwidth', 0.0)
-        config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', proc_params.szmlist)
+        # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
+        szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
+        config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
         # return config_dict
     else:
         proc_params.load(default_config)
@@ -531,7 +533,7 @@ def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
     else:
         return response.text
 
-@seafile_client.route('/del_file/', methods=['DELETE'])
+@seafile_client.route('/del_file')
 def del_file():
     repo_id = request.args.get('repo_id')
     full_path = request.args.get('full_path')
@@ -541,12 +543,13 @@ def del_file():
     request_upload_link = server+f"/api2/repos/{repo_id}/file/?p={full_path}"
 
     _headers = {
-        'Authorization':'Token {}'.format(session['seafile_token'])
+        'Authorization':'Token {}'.format(session['seafile_token']),
+        'Accept' : 'application/json; charset=utf-8; indent=4'
     }
 
-    upload_link_response = requests.get(url=request_upload_link, headers=_headers)
+    upload_link_response = requests.delete(url=request_upload_link, headers=_headers)
     if upload_link_response.status_code == 200:
-        return jsonify('delete completed', 200)
+        return jsonify(str(upload_link_response.content), 200)
     else:
         return "something went wrong"
 
