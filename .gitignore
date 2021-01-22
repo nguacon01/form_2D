@@ -16,3 +16,4 @@ custom_seafileapi
 form_2D/seafile_client/static/tmp
 libs/
 .vscode/
+logs/
