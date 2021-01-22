@@ -26,6 +26,8 @@ from urllib.parse import urlparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import shutil
+
 # server = "https://10.18.0.2"
 # server = 'https://seafile.fticr-ms.eu'
 server = 'https://dung.casc4de.fr'
@@ -568,8 +570,18 @@ def search_file():
 
 @seafile_client.route('/logout')
 def logout():
-    session['current_user'] = ''
+    """
+    after user logout, their files in tmp folder will be deleted
+    """
+    # session['current_user'] = ''
+    user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username)
+    # return user_tmp_dir
+    if os.path.isdir(user_tmp_dir):
+        shutil.rmtree(user_tmp_dir)
+    else:
+        return 'there is no folder user'
     session['seafile_token'] = ''
+    
     return redirect(url_for('seafile_client.index'))
 
 @seafile_client.route('/visual', methods=['POST', 'GET'])
