@@ -84,7 +84,7 @@ def login():
 
 
 @seafile_client.route('/list_repositories')
-@login_required
+# @login_required
 @seafile_token_require
 def list_repositories():
     """
@@ -115,6 +115,7 @@ def repo_items():
     return render_template('seafile_client/repo_items.html', data=items, repo_name=repo_name)
 
 @seafile_client.route('/dir_items')
+@seafile_token_require
 def dir_items():
     """
     get list of SeafFile and SeafDir objects in a directory
