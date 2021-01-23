@@ -46,7 +46,7 @@ def index():
     return render_template('seafile_client/index.html', message='this is a page of seafile api', current_user=session['current_user'])
 
 @seafile_client.route('/login', methods = ['POST', 'GET'])
-@login_required
+# @login_required
 def login():
     """
     Login page
@@ -77,6 +77,11 @@ def login():
             content = json.loads(response.text)
             session["seafile_token"] = content['token']
             session["current_user"] = email
+
+            # create user temp folder
+            tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
+            if not os.path.exists(tmp_folder_path):
+                os.makedirs(tmp_folder_path)
             return redirect(url_for('seafile_client.index', current_user = session["current_user"]))
         else:
             flash(message="Login Fail", category="error")
@@ -149,7 +154,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     Download mscf file to a temporary local directory
     """
     # create temp local dir path
-    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username, parent_dir.split('/')[1])
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir.split('/')[1])
 
     # if file doesnt exist in seafile server, file_full_path is None, then we create a default mscf file in temp local dir
     if file_full_path == '':
@@ -194,7 +199,7 @@ def load_corresponse_files(repo_id, parent_dir):
     Get .method, ExciteSweep and scan.xml files in a directory
     """
     # create temporary local folder to contain method file. Method local file should be in same folder with mscf file
-    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username, parent_dir.split('/')[1])
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir.split('/')[1])
     if not os.path.exists(tmp_folder_path):
         os.makedirs(tmp_folder_path)
 
@@ -205,7 +210,7 @@ def load_corresponse_files(repo_id, parent_dir):
     corresponse_files = {}
     if len(met) > 1 or len(exc) > 1 or len(scanxml) >1:
         # if there are more than 1 file, raise exeption
-        raise Exception( "You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
+        return render_template("errors/400.html", message="You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
     elif len(met) == 1 and len(exc) == 1 and len(scanxml) == 1:
         corresponse_files["method"] = met
         corresponse_files["excitesweep"] = exc
@@ -223,9 +228,9 @@ def load_corresponse_files(repo_id, parent_dir):
             if (file.name.endswith('.method') or file.name == 'ExciteSweep' or file.name == 'scan.xml') and file.type == 'file':
                 data.append(file)
         if len(data) > 3:
-            raise Exception( "You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir )
+            return render_template("errors/400.html", message="You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
         elif len(data) < 3:
-            raise Exception( "You don't have any apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder"%parent_dir )
+            return render_template("errors/400.html", message="You don't have any apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder"%parent_dir)
         else:
             
             for item in data:
@@ -358,7 +363,10 @@ def edit_mscf():
         test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
         if test  != [True, True, True]:
             return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
-        proc_params.load(config)
+        try:
+            proc_params.load(config)
+        except:
+            return render_template("errors/400.html", message=Exception.message) 
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
         # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
@@ -460,7 +468,7 @@ def edit_mscf():
             
             # save the new config file
             default_config.write(save)
-            save.write("\nEDITTED BY DO MANH DUNG at {}".format(datetime.now()))
+            save.write("\n# EDITTED BY DO MANH DUNG at {}".format(datetime.now()))
 
         #upload file to seafile cloud
         upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
@@ -575,7 +583,7 @@ def logout():
     after user logout, their files in tmp folder will be deleted
     """
     # session['current_user'] = ''
-    user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username)
+    user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
     # return user_tmp_dir
     if os.path.isdir(user_tmp_dir):
         shutil.rmtree(user_tmp_dir)

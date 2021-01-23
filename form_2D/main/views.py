@@ -9,6 +9,6 @@ main = Blueprint(
 )
 
 @main.route("/", methods=["GET"])
-@login_required
+# @login_required
 def index():
     return redirect(url_for("seafile_client.index"))
