@@ -9,7 +9,7 @@ from .forms import ConfigForm
 # from spike import processing as proc_spike
 from spike.NPKConfigParser import NPKConfigParser
 from spike.FTICR import FTICRData
-from spike.File import Solarix
+from spike.File import Solarix, Apex
 from datetime import datetime
 from form_2D.libs.EUFT_Spike import processing_4EU as proc_spike
 from form_2D.libs.EUFT_Spike.Tools import FTICR_INTER as FI_tools
@@ -28,9 +28,9 @@ import matplotlib.pyplot as plt
 
 import shutil
 
-# server = "https://10.18.0.2"
+server = "https://10.18.0.2"
 # server = 'https://seafile.fticr-ms.eu'
-server = 'https://dung.casc4de.fr'
+# server = 'https://dung.casc4de.fr'
 
 seafile_client = Blueprint(
     "seafile_client",
@@ -46,7 +46,7 @@ def index():
     return render_template('seafile_client/index.html', message='this is a page of seafile api', current_user=session['current_user'])
 
 @seafile_client.route('/login', methods = ['POST', 'GET'])
-@login_required
+# @login_required
 def login():
     """
     Login page
@@ -71,12 +71,18 @@ def login():
         response = requests.post(
             url=request_token_url,
             data=_data,
-            headers=_headers
+            headers=_headers,
+            verify=False
         )
         if response.status_code == 200:
             content = json.loads(response.text)
             session["seafile_token"] = content['token']
             session["current_user"] = email
+
+            # create user temp folder
+            tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
+            if not os.path.exists(tmp_folder_path):
+                os.makedirs(tmp_folder_path)
             return redirect(url_for('seafile_client.index', current_user = session["current_user"]))
         else:
             flash(message="Login Fail", category="error")
@@ -84,14 +90,14 @@ def login():
 
 
 @seafile_client.route('/list_repositories')
-@login_required
+# @login_required
 @seafile_token_require
 def list_repositories():
     """
     get list of all repositories in seafile server
 
     """
-    client = custom_seafileapi.connect(server, token=session['seafile_token'])
+    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
     list_repos = client.repos.list_repos(type="mine")
     if len(list_repos) < 1:
         return "You dont have any repository"
@@ -106,7 +112,7 @@ def repo_items():
     """
     repo_id = request.args.get('repo_id')
     repo_name = request.args.get('repo_name')
-    client = custom_seafileapi.connect(server, token=session['seafile_token'])
+    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
     repo = client.repos.get_repo(repo_id)
 
     #return array of SeafDir objects
@@ -115,6 +121,7 @@ def repo_items():
     return render_template('seafile_client/repo_items.html', data=items, repo_name=repo_name)
 
 @seafile_client.route('/dir_items')
+@seafile_token_require
 def dir_items():
     """
     get list of SeafFile and SeafDir objects in a directory
@@ -127,7 +134,7 @@ def dir_items():
     dir_name = request.args.get('dir_name')
     parent_dir = request.args.get('parent_dir')
     # connect to seafile server
-    client = custom_seafileapi.connect(server, token=session['seafile_token'])
+    client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
     # get repository data
     repo = client.repos.get_repo(repo_id)
     # create dir object
@@ -148,7 +155,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     Download mscf file to a temporary local directory
     """
     # create temp local dir path
-    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username, parent_dir.split('/')[1])
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir.split('/')[1])
 
     # if file doesnt exist in seafile server, file_full_path is None, then we create a default mscf file in temp local dir
     if file_full_path == '':
@@ -160,7 +167,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     # else, mscf file exists in seafile server
     else:
         # connect to seafile server
-        client = custom_seafileapi.connect(server, token=session['seafile_token'])
+        client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
         # get repo
         repo = client.repos.get_repo(repo_id)
         # check if temp local folder existed or not. if not, creat temp local folder
@@ -180,7 +187,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
         
         file_name = file.name
         tmp_file_path = os.path.join(tmp_folder_path, file_name)
-        file_content = requests.get(url=re_download_file_link, stream=True)
+        file_content = requests.get(url=re_download_file_link, stream=True, verify=False)
         # write mscf file into local file
         with open(tmp_file_path, "wb") as f:
             for chunk in file_content.iter_lines():
@@ -193,7 +200,7 @@ def load_corresponse_files(repo_id, parent_dir):
     Get .method, ExciteSweep and scan.xml files in a directory
     """
     # create temporary local folder to contain method file. Method local file should be in same folder with mscf file
-    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username, parent_dir.split('/')[1])
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir.split('/')[1])
     if not os.path.exists(tmp_folder_path):
         os.makedirs(tmp_folder_path)
 
@@ -204,7 +211,7 @@ def load_corresponse_files(repo_id, parent_dir):
     corresponse_files = {}
     if len(met) > 1 or len(exc) > 1 or len(scanxml) >1:
         # if there are more than 1 file, raise exeption
-        raise Exception( "You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
+        return render_template("errors/400.html", message="You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
     elif len(met) == 1 and len(exc) == 1 and len(scanxml) == 1:
         corresponse_files["method"] = met
         corresponse_files["excitesweep"] = exc
@@ -213,18 +220,20 @@ def load_corresponse_files(repo_id, parent_dir):
         return corresponse_files
     else:
         # if there is not a file, then we load it from seafile server
-        client = custom_seafileapi.connect(server, token=session['seafile_token'])
+        client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
         repo = client.repos.get_repo(repo_id)
         method_files = repo.get_items(type='f', recursive=1)
+        return method_files
         data = []
         # check number of method files in seafile server
         for file in method_files:
-            if (file.name.endswith('.method') or file.name == 'ExciteSweep' or file.name == 'scan.xml') and file.type == 'file':
+            # return (file.full_path, parent_dir, file.path)
+            if (file.name.endswith('.method') or file.name == 'ExciteSweep' or file.name == 'scan.xml') and file.type == 'file' and (parent_dir in file.full_path):
                 data.append(file)
-        if len(data) > 3:
-            raise Exception( "You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir )
-        elif len(data) < 3:
-            raise Exception( "You don't have any apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder"%parent_dir )
+        # if len(data) > 3:
+        #     return render_template("errors/400.html", message="You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
+        if len(data) < 3:
+            return render_template("errors/400.html", message="You don't have any apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder"%parent_dir)
         else:
             
             for item in data:
@@ -237,7 +246,7 @@ def load_corresponse_files(repo_id, parent_dir):
                 
                 file_name = item.name
                 tmp_file_path = os.path.join(tmp_folder_path, file_name)
-                file_content = requests.get(url=re_download_file_link, stream=True)
+                file_content = requests.get(url=re_download_file_link, stream=True, verify=False)
                 with open(tmp_file_path, "wb") as f:
                     for chunk in file_content.iter_lines():
                         f.write(chunk)
@@ -265,6 +274,7 @@ def edit_mscf():
 
     # load method file
     local_corresponse_files = load_corresponse_files(repo_id, parent_dir)
+    # return str(local_corresponse_files)
     local_method_file = local_corresponse_files['apexAcquisition.method']
     local_excitesweep_file = local_corresponse_files['ExciteSweep']
     local_scan_file = local_corresponse_files['scan.xml']
@@ -289,6 +299,10 @@ def edit_mscf():
 
 
     params_method_file = Solarix.read_param(local_method_file)
+    # Check if it is Apex or Solarix. 
+    # if it is Apex, params_method_file = Solarix.read_param(local_method_file) will return empty dictionary
+    if params_method_file[""]:
+        params_method_file = Apex.read_param(local_method_file)
 
     # find Bo
     FTICR_Data.axis1.calibA = float(params_method_file["ML1"])
@@ -357,7 +371,10 @@ def edit_mscf():
         test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
         if test  != [True, True, True]:
             return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
-        proc_params.load(config)
+        try:
+            proc_params.load(config)
+        except:
+            return render_template("errors/400.html", message=Exception.message) 
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
         # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
@@ -459,7 +476,7 @@ def edit_mscf():
             
             # save the new config file
             default_config.write(save)
-            save.write("\nEDITTED BY DO MANH DUNG at {}".format(datetime.now()))
+            save.write("\n# EDITTED BY DO MANH DUNG at {}".format(datetime.now()))
 
         #upload file to seafile cloud
         upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
@@ -491,7 +508,7 @@ def get_upload_link(_repo_id, parent_dir):
         'Authorization':'Token {}'.format(session['seafile_token'])
     }
 
-    upload_link_response = requests.get(url=request_upload_link, headers=_headers)
+    upload_link_response = requests.get(url=request_upload_link, headers=_headers, verify=False)
     if upload_link_response.status_code == 200:
         upload_link = json.loads(upload_link_response.text)
 
@@ -529,7 +546,7 @@ def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
         "file":open(local_file_path, "r")
     }
 
-    response = requests.post(url=upload_link, headers=_headers, data=_data, files=_files)
+    response = requests.post(url=upload_link, headers=_headers, data=_data, files=_files, verify=False)
     if response.status_code == 200:
         return response.text
     else:
@@ -574,7 +591,7 @@ def logout():
     after user logout, their files in tmp folder will be deleted
     """
     # session['current_user'] = ''
-    user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', current_user.username)
+    user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
     # return user_tmp_dir
     if os.path.isdir(user_tmp_dir):
         shutil.rmtree(user_tmp_dir)
