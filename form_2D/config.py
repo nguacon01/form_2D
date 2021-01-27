@@ -6,7 +6,7 @@ class Config(object):
     basedir = os.path.abspath(os.path.dirname(__file__))
     TESTING = False
     SECRET_KEY = "X8slQiQWkvC0Zytlrntx9NQB009oOOg5r5kiah68NkckksDyuguwkz0KCV9lK3P5"
-    DEBUG = False
+    DEBUG = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "site.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_TOKEN_LOCATION = "cookies"

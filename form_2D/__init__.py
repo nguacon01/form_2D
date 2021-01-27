@@ -21,14 +21,14 @@ def create_app():
 
         #Blueprints imports
         from .main.views import main
-        from .metadata.views import metadata
+        # from .metadata.views import metadata
         from .auth.views import auth
         from .seafile_client.views import seafile_client
         from .errors.handlers import errors
         from .assets import compile_static_assets
 
         app.register_blueprint(main)
-        app.register_blueprint(metadata, url_prefix = "/metadata")
+        # app.register_blueprint(metadata, url_prefix = "/metadata")
         app.register_blueprint(auth, url_prefix = "/auth")
         app.register_blueprint(seafile_client, url_prefix = "/seafile_client")
         app.register_blueprint(errors, url_predix="/error")

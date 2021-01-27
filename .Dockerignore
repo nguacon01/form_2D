@@ -2,6 +2,7 @@
 env/
 *__pycache__*
 *.pyc
-form_2D/libs/custom_seafileapi/
-form_2D/libs/EUFT_Spike/
-form_2D/libs/FileStreaming.py
+# form_2D/libs/custom_seafileapi/
+# form_2D/libs/EUFT_Spike/
+# form_2D/libs/FileStreaming.py
+app.sock

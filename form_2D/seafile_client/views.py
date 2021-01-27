@@ -121,6 +121,7 @@ def repo_items():
     for item in items:
         if item.name == 'FTICR_DATA':
             data.append(item)
+
     return render_template('seafile_client/repo_items.html', data=data, repo_name=repo_name)
 
 @seafile_client.route('/dir_items')
@@ -185,7 +186,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     Download mscf file to a temporary local directory
     """
     # create temp local dir path
-    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir.split('/')[1])
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir)
     if not os.path.exists(tmp_folder_path):
             os.makedirs(tmp_folder_path)
     # if file doesnt exist in seafile server, file_full_path is None, then we create a default mscf file in temp local dir
@@ -229,7 +230,7 @@ def load_corresponse_files(repo_id, parent_dir):
     Get .method, ExciteSweep and scan.xml files in a directory
     """
     # create temporary local folder to contain method file. Method local file should be in same folder with mscf file
-    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir.split('/')[1])
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir)
     if not os.path.exists(tmp_folder_path):
         os.makedirs(tmp_folder_path)
 
@@ -403,7 +404,7 @@ def edit_mscf():
         try:
             proc_params.load(config)
         except:
-            return render_template("errors/400.html", message=Exception.message) 
+            return render_template("errors/400.html", message="Your config file has error.") 
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
         # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
@@ -429,8 +430,11 @@ def edit_mscf():
         form.do_sane.data = str(config_dict.get("do_sane", "False"))
         form.format.data = str(config_dict.get("format", "solarix"))
         form.samplingfile.data = str(config_dict.get("samplingfile"))
-        # by default, N.U.S field is False
-        form.nus.data = str(False)
+
+        if config_dict.get("samplingfile") == 'None':
+            # by default, N.U.S field is False
+            form.nus.data = str(False)
+        else: form.nus.data = str(True)
         form.save_file.data = str(config_filename.split(".")[0])
         
     if form.validate_on_submit():
@@ -490,7 +494,7 @@ def edit_mscf():
                 "#Estimate Bo from internal calibration: {}T \n".format(project_dict['Bo']) +
                 "#Experiment size (F1 x F2): {}k x {}k \n".format(project_dict['sizeF1'], project_dict['sizeF2']) +
                 "#Data size: {}MB \n".format(project_dict['data_size']) +
-                "#Excitation pulses from {}Hz (m/z={}) to {}Hz (m/z={}) \n".format(project_dict['freqh'], project_dict['mzh'], project_dict['freql'], project_dict['mzl']) +
+                "#Excitation pulses from {}Hz (m/z={}) to {}Hz (m/z={}) \n".format(project_dict['mzh'], project_dict['freqh'], project_dict['mzl'], project_dict['freql']) +
                 "#Acquisition spectral width: {}Hz (low mass: {}) \n".format(project_dict['f2_specwidth'], project_dict['lowmass']) 
             )
             for section in default_sections:
