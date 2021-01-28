@@ -9,6 +9,7 @@
                 <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.dir_items', repo_id=item.repo.id, oid = item.id, dir_name = item.name, dir_fullpath=item.full_path, dir_path=item.path, parent_dir=item.parent_dir)}}">{{item.name}}</a>
             </li>
             {% endfor %}
+            <li><a class="hvr-sweep-to-right" href="{{url_for('seafile_client.logout')}}">Logout</a></li>
         </ul>
     </div>
 </div>

@@ -43,7 +43,7 @@ seafile_client = Blueprint(
 @seafile_client.route('/index')
 @seafile_token_require
 def index():
-    return render_template('seafile_client/index.html', message='this is a page of seafile api', current_user=session['current_user'])
+    return redirect(url_for('seafile_client.repo_items'))
 
 @seafile_client.route('/login', methods = ['POST', 'GET'])
 # @login_required
@@ -83,7 +83,7 @@ def login():
             tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
             if not os.path.exists(tmp_folder_path):
                 os.makedirs(tmp_folder_path)
-            return redirect(url_for('seafile_client.index', current_user = session["current_user"]))
+            return redirect(url_for('seafile_client.repo_items', current_user = session["current_user"]))
         else:
             flash(message="Login Fail", category="error")
     return render_template('seafile_client/login.html')
@@ -110,17 +110,22 @@ def repo_items():
     get list of items in a repository.
     param required: repo_id: id of repository
     """
-    repo_id = request.args.get('repo_id')
-    repo_name = request.args.get('repo_name')
+    # repo_id = request.args.get('repo_id')
+    # repo_name = request.args.get('repo_name')
     client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
-    repo = client.repos.get_repo(repo_id)
-
-    #return array of SeafDir objects
-    items = repo.get_items(recursive=0, type='d')
+    list_repos = client.repos.list_repos(type="mine")
+    if len(list_repos) < 1:
+        return "You dont have any repository"
     data = []
-    for item in items:
-        if item.name == 'FTICR_DATA':
-            data.append(item)
+    repo_name=''
+    for repo in list_repos:
+        repo_item = client.repos.get_repo(repo.id)
+        #return array of SeafDir objects
+        items = repo.get_items(recursive=0, type='d')
+        for item in items:
+            if item.name == 'FTICR_DATA':
+                data.append(item)
+                repo_name = repo.name
 
     return render_template('seafile_client/repo_items.html', data=data, repo_name=repo_name)
 
