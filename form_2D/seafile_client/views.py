@@ -43,7 +43,7 @@ seafile_client = Blueprint(
 @seafile_client.route('/index')
 @seafile_token_require
 def index():
-    return redirect(url_for('seafile_client.repo_items'))
+    return redirect(url_for('seafile_client.dir_items'))
 
 @seafile_client.route('/login', methods = ['POST', 'GET'])
 # @login_required
@@ -83,7 +83,7 @@ def login():
             tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
             if not os.path.exists(tmp_folder_path):
                 os.makedirs(tmp_folder_path)
-            return redirect(url_for('seafile_client.repo_items', current_user = session["current_user"]))
+            return redirect(url_for('seafile_client.dir_items', current_user = session["current_user"]))
         else:
             flash(message="Login Fail", category="error")
     return render_template('seafile_client/login.html')
@@ -99,6 +99,7 @@ def list_repositories():
     """
     client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
     list_repos = client.repos.list_repos(type="mine")
+    
     if len(list_repos) < 1:
         return "You dont have any repository"
     return render_template('seafile_client/list_repositories.html', data=list_repos)
@@ -133,32 +134,36 @@ def repo_items():
 @seafile_token_require
 def dir_items():
     """
-    get list of SeafFile and SeafDir objects in a directory
-    param required: repo_id
-    param required: dir_name
-    param required: parent_dir
+    get list of .d downstream directories in a FTICR_DATA directory
     """
-    repo_id = request.args.get('repo_id')
-    oid = request.args.get('oid')
-    dir_name = request.args.get('dir_name')
-    parent_dir = request.args.get('parent_dir')
-    dir_fullpath = request.args.get('dir_fullpath')
-    # connect to seafile server
+
     client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
-    # get repository data
-    repo = client.repos.get_repo(repo_id)
-    # create dir object
-    dir = SeafDir(repo, oid, dir_name, 'dir', parent_dir)
+    list_repos = client.repos.list_repos(type="mine", nameContains='My Library')
+    if len(list_repos) != 1:
+        return "You dont have any repository named'My Library'"
+    
+    my_library_repo = list_repos[0]
+    repo_id = my_library_repo.id
+
+    dir_name='FTICR_DATA'
+
+    # create FTICR_DATA dir object. It is a upstream directory of My Library, so parent_dir is '/' and we no need to declare in object
+    FTICR_DATA_dir = SeafDir(repo=my_library_repo, name=dir_name, type='dir')
     # load dir items
-    # dir.load_entries(type='d')
-    dir.load_entries(recursive=1, type='d')
+    FTICR_DATA_dir.load_entries(recursive=1, type='d')
     data = []
-    for item in dir.entries:
+    for item in FTICR_DATA_dir.entries:
         if item['name'].endswith('.d'):
-            sub_dir_fullpath = dir_fullpath+item['name']
-            sub_dir = SeafDir(repo=repo, name=item['name'], type='dir', parent_dir=item['parent_dir'])
-            if 'FTICR_DATA' in sub_dir.full_path:
-                data.append(sub_dir)
+            sub_dir = SeafDir(repo=my_library_repo, name=item['name'], type='dir', parent_dir=item['parent_dir'])
+            # check if in .d folder has ser file or not
+            try:
+                # check if sub directory of FTICR_DATA has ser file or not
+                re = my_library_repo.get_file(path=sub_dir.full_path+'ser', parent_dir=sub_dir.full_path)
+                if 'FTICR_DATA' in sub_dir.full_path:
+                    data.append(sub_dir)
+            except:
+                pass
+            
     return render_template('seafile_client/dir_items.html', data=data, dir_name=dir_name, repo_id=repo_id)
 
 @seafile_client.route('/sub_dir', methods=['POST', 'GET'])
@@ -175,13 +180,11 @@ def sub_dir():
     repo = client.repos.get_repo(repo_id)
 
     dir = SeafDir(repo=repo, name=dir_name, type='dir', parent_dir=parent_dir)
+    
     dir.load_entries(recursive=1, type='f')
     data = []
-    test = {}
     for item in dir.entries:
         if item['name'].endswith('.mscf') and item['parent_dir'] in dir_fullpath:
-            test['parent_dir'] = dir_name
-            test['item_parent_dir'] = item['parent_dir']
             mscf_file = SeafFile(repo=repo, name=item['name'], type='file', parent_dir=item['parent_dir'])
             data.append(mscf_file)
     return render_template('seafile_client/sub_dir.html', data=data, dir_name=dir_name, repo_id=repo_id, dir_fullpath=dir_fullpath)
@@ -313,11 +316,12 @@ def edit_mscf():
     params_method_file = Solarix.read_param(local_method_file)
     # Check if it is Apex or Solarix. 
     # if it is Apex, params_method_file = Solarix.read_param(local_method_file) will return empty dictionary
+    project_format='Solarix'
     if len(params_method_file) < 2:
+        project_format='Apex'
         params_method_file = Apex.read_param(local_method_file)
 
     local_project_path, config_filename = os.path.split(local_config_file_path)
-    
 
     # # create experiment config form
     form = ConfigForm()
@@ -361,10 +365,16 @@ def edit_mscf():
     mzl = round(FTICR_Data.axis2.htomz(freql), 2)
     mzh = round(FTICR_Data.axis2.htomz(freqh), 2)
 
-    project_dict["freqh"] = freqh
-    project_dict["freql"] = freql
-    project_dict["mzh"] = mzh
-    project_dict["mzl"] = mzl
+    if (project_format=='Apex'):
+        project_dict["freqh"] = mzh
+        project_dict["freql"] = mzl
+        project_dict["mzh"] = freqh
+        project_dict["mzl"] = freql
+    else:
+        project_dict["freqh"] = freqh
+        project_dict["freql"] = freql
+        project_dict["mzh"] = mzh
+        project_dict["mzl"] = mzl
 
     # show f2_specwidth
     f2_specwidth = float(params_method_file["SW_h"])
@@ -610,34 +620,23 @@ def del_file():
     else:
         return "something went wrong"
 
-@seafile_client.route('/test')
-def search_file():
-    url = "https://seafile.fticr-ms.eu/api2/ping/"
-    # _headers = {
-    #     'Authorization':'Token {}'.format(session['seafile_token']),
-    #     'content-type': 'application/json ; indent=4; charset=utf-8',
-    # }
-    cert = os.path.join(seafile_client.root_path, 'static/cert/ca.pem')
-    s = requests.Session()
-
-    response = s.get(url="https://10.18.0.2/api2/ping/", verify=cert)
-    return str(response.headers)
-
 @seafile_client.route('/logout')
 def logout():
     """
     after user logout, their files in tmp folder will be deleted
     """
-    # session['current_user'] = ''
-    user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
-    # return user_tmp_dir
-    if os.path.isdir(user_tmp_dir):
-        shutil.rmtree(user_tmp_dir)
+    if (session['seafile_token']):
+        # session['current_user'] = ''
+        user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
+        # return user_tmp_dir
+        if os.path.isdir(user_tmp_dir):
+            shutil.rmtree(user_tmp_dir)
+        else:
+            return 'there is no folder user'
+        session['seafile_token'] = ''
+        return redirect(url_for('seafile_client.index'))
     else:
-        return 'there is no folder user'
-    session['seafile_token'] = ''
-    
-    return redirect(url_for('seafile_client.index'))
+        return redirect(url_for('seafile_client.login'))
 
 @seafile_client.route('/visual', methods=['POST', 'GET'])
 def visual():
