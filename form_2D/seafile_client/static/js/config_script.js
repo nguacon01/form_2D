@@ -95,7 +95,7 @@ function get_values_sizemultipliers(){
                 "sizeF1":sizeF1*1024,
                 "sizeF2":sizeF2*1024
             },
-            url: '/metadata/comp_sizes'
+            url: '/seafile_client/comp_sizes'
         })
         .always(function(res){
             if (res.status == "success"){

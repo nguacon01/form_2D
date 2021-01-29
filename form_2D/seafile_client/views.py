@@ -638,7 +638,36 @@ def logout():
     else:
         return redirect(url_for('seafile_client.login'))
 
-@seafile_client.route('/visual', methods=['POST', 'GET'])
-def visual():
+@seafile_client.route("/comp_sizes", methods=["GET", "POST"])
+def comp_sizes():
+    """
+    calculate norm of output file when change sizemultipliers
+    """
+    if request.method == 'POST':
+        return make_response('method must be GET', 400)
 
-    return True
+    # post_data = request.get_json()
+    sizeF1 = int(request.args.get("sizeF1"))
+    sizeF2 = int(request.args.get("sizeF2"))
+    m1 = float(request.args.get("m1"))
+    m2 = float(request.args.get("m2"))
+    if not sizeF1 or not sizeF2 or not m1 or not m2:
+        return make_response(jsonify({"msg":"Make sure you filled up sizemultipliers field", "status":"fail"}), 400)
+    
+    dd = FTICRData(dim=2)
+    dd.axis1.size = sizeF1
+    dd.axis2.size = sizeF2
+    szmul = [m1, m2]
+
+    allsizes = proc_spike.comp_sizes(d0=dd, szmlist=szmul)
+    sizes = allsizes[0]
+    somme = 0
+    for a, b in allsizes:
+        somme += a*b
+    return make_response(jsonify({
+        "msg":"Success", 
+        "status":"success", 
+        "spec_size":{"sizeF1":sizes[0], "sizeF2":sizes[1]}, 
+        "uncompressed_size":str(somme//1024//1024*8)}), 
+        201
+    )

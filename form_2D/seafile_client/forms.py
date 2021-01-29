@@ -44,7 +44,7 @@ class ConfigForm(FlaskForm):
         validators=[
         ],
         description="Format can be either Solarix or Apex depending on the version of the spectrometer.",
-        choices=[("apex","Apex"),("solarix","Solarix")]
+        choices=[("Apex","Apex"),("Solarix","Solarix")]
     )
 
     ### [processing section] ###
