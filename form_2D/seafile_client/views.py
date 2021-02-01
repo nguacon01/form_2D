@@ -162,6 +162,7 @@ def dir_items():
                 if 'FTICR_DATA' in sub_dir.full_path:
                     data.append(sub_dir)
             except:
+                # return render_template("errors/general_error.html", message="There is not a project in which has a ser file.")
                 pass
             
     return render_template('seafile_client/dir_items.html', data=data, dir_name=dir_name, repo_id=repo_id)
@@ -200,7 +201,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     # if file doesnt exist in seafile server, file_full_path is None, then we create a default mscf file in temp local dir
     if file_full_path == '':
         tmp_file_path = os.path.join(tmp_folder_path, 'new.mscf')
-        default_conf_file = os.path.join(metadata.root_path, "static", "files", "process2D.default.mscf")
+        default_conf_file = os.path.join(seafile_client.root_path, "static", "files", "process2D.default.mscf")
         with open(tmp_file_path, "w") as f:
             with open(default_conf_file,'r') as data:
                 f.write(data.read())
@@ -295,20 +296,12 @@ def load_corresponse_files(repo_id, parent_dir):
             # return path of temporary method file in local folder
         return corresponse_files
 
-@seafile_client.route('/edit_mscf', methods=['GET', 'POST'])
-@seafile_token_require
-def edit_mscf():
+def mscf_header_info(repo_id, file_full_path, parent_dir):
     """
-    author: DMD - casc4de
-    This function help us to modify an existed config file - mscf or also creates a new one.
+        download .method, ExciteSweep and scan.xml file
+        return project_dict, a dictionary in which contain infomation about chosen mscf file.
+        project_dict will be writen in header of output mscf file
     """
-    repo_id = request.args.get("repo_id")
-    file_full_path = request.args.get('file_full_path')
-    config_filename = request.args.get('config_filename')
-    parent_dir = request.args.get('parent_dir')
-
-    # download mscf file to local for editting and return local file path
-    local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
 
     # load method file
     local_corresponse_files = load_corresponse_files(repo_id, parent_dir)
@@ -321,12 +314,6 @@ def edit_mscf():
         project_format='Apex'
         params_method_file = Apex.read_param(local_method_file)
 
-    local_project_path, config_filename = os.path.split(local_config_file_path)
-
-    # # create experiment config form
-    form = ConfigForm()
-
-    # #####Information about the chosen project######
     project_dict = {}
 
     project_name = parent_dir.strip('/').split('/')[-1]
@@ -381,16 +368,6 @@ def edit_mscf():
     lowmass = FTICR_Data.axis2.htomz(f2_specwidth)
     project_dict["f2_specwidth"] = f2_specwidth
     project_dict["lowmass"] = round(lowmass,2)
-    #####END Information about the chosen project######
-
-    # default config file
-    default_conf_file = os.path.join(metadata.root_path, "static", "files", "process2D.default.mscf")
-
-    default_config = NPKConfigParser()
-    default_config.readfp(open(default_conf_file,'r'))
-
-    # ['import', 'processing', 'peak_picking']
-    default_sections = default_config.sections()
 
     # set f1_specwidth default value
     # determine f1_specwidth
@@ -400,6 +377,40 @@ def edit_mscf():
     else:
         f1_specwidth = 50000
     project_dict["f1_specwidth"] = f1_specwidth
+    return project_dict
+
+@seafile_client.route('/edit_mscf', methods=['GET', 'POST'])
+@seafile_token_require
+def edit_mscf():
+    """
+    author: DMD - casc4de
+    This function help us to modify an existed config file - mscf or also creates a new one.
+    """
+    repo_id = request.args.get("repo_id")
+    file_full_path = request.args.get('file_full_path')
+    config_filename = request.args.get('config_filename')
+    parent_dir = request.args.get('parent_dir')
+    parent_dir = parent_dir
+    project_name = parent_dir.strip('/').split('/')[-1]
+    # create experiment config form
+    form = ConfigForm()
+
+    # create a dictionary in which contain information of mscf file. it will be writen in header of output mscf file
+    project_dict = mscf_header_info(repo_id, file_full_path, parent_dir)
+
+    # download mscf file to local for editting and return local file path
+    local_config_file_path = download_mscf_file(repo_id, file_full_path, parent_dir)
+    # extract local path of chosen project and its name
+    local_project_path, config_filename = os.path.split(local_config_file_path)
+
+    # default config file
+    default_conf_file = os.path.join(metadata.root_path, "static", "files", "process2D.default.mscf")
+
+    default_config = NPKConfigParser()
+    default_config.readfp(open(default_conf_file,'r'))
+
+    # ['import', 'processing', 'peak_picking']
+    default_sections = default_config.sections()
 
     # create processing params object base on Proc_Parameters() object in spike lib
     proc_params = proc_spike.Proc_Parameters()
@@ -438,19 +449,18 @@ def edit_mscf():
         config_dict['F1_specwidth'] = default_config['import']['F1_specwidth']
         config_dict['sizemultipliers'] = default_config['processing']['sizemultipliers']
     
-    if request.method == "GET":
+    # if request.method == "GET":
 
-        # Set value for select forms
-        form.compress_outfile.data = str(config_dict["compress_outfile"])
-        form.do_sane.data = str(config_dict.get("do_sane", "False"))
-        form.format.data = str(config_dict.get("format", "solarix"))
-        form.samplingfile.data = str(config_dict.get("samplingfile"))
-
-        if config_dict.get("samplingfile") == 'None':
-            # by default, N.U.S field is False
-            form.nus.data = str(False)
-        else: form.nus.data = str(True)
-        form.save_file.data = str(config_filename.split(".")[0])
+    # Set value for select forms
+    form.compress_outfile.data = str(config_dict["compress_outfile"])
+    form.do_sane.data = str(config_dict.get("do_sane", "False"))
+    form.format.data = str(config_dict.get("format", "solarix"))
+    form.samplingfile.data = str(config_dict.get("samplingfile"))
+    if config_dict.get("samplingfile") == 'None':
+        # by default, N.U.S field is False
+        form.nus.data = str(False)
+    else: form.nus.data = str(True)
+    form.save_file.data = str(config_filename.split(".")[0])
         
     if form.validate_on_submit():
         
@@ -524,7 +534,7 @@ def edit_mscf():
             
             # save the new config file
             default_config.write(save)
-            save.write("\n# EDITTED BY DO MANH DUNG at {}".format(datetime.now()))
+            save.write("\n# EDITTED BY {} at {}".format(session['current_user'], datetime.now()))
 
         #upload file to seafile cloud
         upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
@@ -638,10 +648,10 @@ def logout():
     else:
         return redirect(url_for('seafile_client.login'))
 
-@seafile_client.route("/comp_sizes", methods=["GET", "POST"])
+@seafile_client.route("/comp_sizes", methods=["GET"])
 def comp_sizes():
     """
-    calculate norm of output file when change sizemultipliers
+    calculate size of output file when change sizemultipliers
     """
     if request.method == 'POST':
         return make_response('method must be GET', 400)

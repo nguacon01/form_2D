@@ -38,7 +38,8 @@ $(document).ready(function(){
             $("#do_pgsane").val('True')
         }else{
             $(".nus_child").addClass('hidden');
-            $("#do_pgsane").val('False')
+            $("#do_pgsane").val('False');
+            $("#samplingfile").html('');
         }
     });
 
