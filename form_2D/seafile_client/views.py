@@ -250,7 +250,7 @@ def load_corresponse_files(repo_id, parent_dir):
     corresponse_files = {}
     if len(met) > 1 or len(exc) > 1 or len(scanxml) >1:
         # if there are more than 1 file, raise exeption
-        return render_template("errors/400.html", message="You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
+        return render_template("errors/general_error.html", message="You have more than 1 apexAcquisition.method or ExciteSweep or scan.xml file in the %s folder, using the first one"%parent_dir)
     elif len(met) == 1 and len(exc) == 1 and len(scanxml) == 1:
         corresponse_files["method"] = met
         corresponse_files["excitesweep"] = exc
@@ -421,16 +421,16 @@ def edit_mscf():
         try:
             config.readfp(open(local_config_file_path, 'r'))
         except Exception:
-            return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
+            return render_template("errors/general_error.html", message="There are some problems with mscf file. Please contact your administrator.")
         # load config data into proc_params object
         # test all sections are present for a valid file
         test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
         if test  != [True, True, True]:
-            return render_template("errors/400.html", message="There are some problems with mscf file. Please contact your administrator.")
+            return render_template("errors/general_error.html", message="There are some problems with mscf file. Please contact your administrator.")
         try:
             proc_params.load(config)
         except:
-            return render_template("errors/400.html", message="Your config file has error.") 
+            return render_template("errors/general_error.html", message="Your config file has error.") 
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
         # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
@@ -535,6 +535,14 @@ def edit_mscf():
             # save the new config file
             default_config.write(save)
             save.write("\n# EDITTED BY {} at {}".format(session['current_user'], datetime.now()))
+
+            # create a job in queue manager (QM)
+            create_job(data={
+                'mscf_file' : save_file_name,
+                'email' : session['current_user'],
+                'directory' : project_dict['name'],
+                'job_name' : 'job_'+project_dict['name'].split('.')[0]+'_'+save_file_name.split('.')[0]+'.j'
+            })
 
         #upload file to seafile cloud
         upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
@@ -681,3 +689,13 @@ def comp_sizes():
         "uncompressed_size":str(somme//1024//1024*8)}), 
         201
     )
+
+def create_job(data):
+    server = 'http://192.168.1.16:9999/create_job'
+
+    res = requests.post(url=server, json=data)
+
+    if res.status_code != 200:
+        return res.text
+    else:
+        return res.text
