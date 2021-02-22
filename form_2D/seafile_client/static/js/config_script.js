@@ -39,7 +39,7 @@ $(document).ready(function(){
         }else{
             $(".nus_child").addClass('hidden');
             $("#do_pgsane").val('False');
-            $("#samplingfile").html('');
+            $("#samplingfile").html('None');
         }
     });
 

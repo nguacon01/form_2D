@@ -456,7 +456,7 @@ def edit_mscf():
     form.do_sane.data = str(config_dict.get("do_sane", "False"))
     form.format.data = str(config_dict.get("format", "solarix"))
     form.samplingfile.data = str(config_dict.get("samplingfile"))
-    if config_dict.get("samplingfile") == 'None':
+    if config_dict.get("samplingfile") == 'None' or config_dict.get("samplingfile") == '':
         # by default, N.U.S field is False
         form.nus.data = str(False)
     else: form.nus.data = str(True)
@@ -537,12 +537,12 @@ def edit_mscf():
             save.write("\n# EDITTED BY {} at {}".format(session['current_user'], datetime.now()))
 
             # create a job in queue manager (QM)
-            create_job(data={
-                'mscf_file' : save_file_name,
-                'email' : session['current_user'],
-                'directory' : project_dict['name'],
-                'job_name' : 'job_'+project_dict['name'].split('.')[0]+'_'+save_file_name.split('.')[0]+'.j'
-            })
+            # create_job(data={
+            #     'mscf_file' : save_file_name,
+            #     'email' : session['current_user'],
+            #     'directory' : project_dict['name'],
+            #     'job_name' : 'job_'+project_dict['name'].split('.')[0]+'_'+save_file_name.split('.')[0]+'.j'
+            # })
 
         #upload file to seafile cloud
         upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
