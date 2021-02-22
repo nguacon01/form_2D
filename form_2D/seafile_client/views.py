@@ -79,6 +79,13 @@ def login():
             session["seafile_token"] = content['token']
             session["current_user"] = email
 
+            # get client username
+            client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+            client_prof = client.get_user_profile()
+            session["username"] = client_prof['name']
+
+            # get user profile here
+
             # create user temp folder
             tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
             if not os.path.exists(tmp_folder_path):
