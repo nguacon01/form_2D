@@ -7,6 +7,13 @@
             {% for item in data %}
                 <li class="">
                     <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.edit_mscf', file_full_path=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, config_filename=item.name)}}">{{item.name}}</a>       
+                    <button 
+                        job_email={{job_email}}
+                        mscf_file={{item.name}}
+                        job_name={{item.name}}
+                        directory={{dir_name}}
+                        job_username={{job_username}}
+                    >Create Job</button> 
                 </li>
             {% endfor %}
                 <li class="">
