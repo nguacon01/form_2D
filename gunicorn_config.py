@@ -13,8 +13,8 @@ timeout = 120
 #
 #       A string of "debug", "info", "warning", "error", "critical"
 #
-errorlog = 'logs/errlog.txt'
-loglevel = 'error'
-accesslog = 'logs/acclog.txt'
+errorlog = 'logs/errlog.log'
+loglevel = 'debug'
+accesslog = 'logs/acclog.log'
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 reload = True

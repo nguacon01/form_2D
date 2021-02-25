@@ -79,6 +79,13 @@ def login():
             session["seafile_token"] = content['token']
             session["current_user"] = email
 
+            # get client username
+            client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
+            client_prof = client.get_user_profile()
+            session["username"] = client_prof['name']
+
+            # get user profile here
+
             # create user temp folder
             tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
             if not os.path.exists(tmp_folder_path):
@@ -464,7 +471,7 @@ def edit_mscf():
     form.do_sane.data = str(config_dict.get("do_sane", "False"))
     form.format.data = str(config_dict.get("format", "solarix"))
     form.samplingfile.data = str(config_dict.get("samplingfile"))
-    if config_dict.get("samplingfile") == 'None':
+    if config_dict.get("samplingfile") == 'None' or config_dict.get("samplingfile") == '':
         # by default, N.U.S field is False
         form.nus.data = str(False)
     else: form.nus.data = str(True)
@@ -543,6 +550,14 @@ def edit_mscf():
             # save the new config file
             default_config.write(save)
             save.write("\n# EDITTED BY {} at {}".format(session['current_user'], datetime.now()))
+
+            # create a job in queue manager (QM)
+            # create_job(data={
+            #     'mscf_file' : save_file_name,
+            #     'email' : session['current_user'],
+            #     'directory' : project_dict['name'],
+            #     'job_name' : 'job_'+project_dict['name'].split('.')[0]+'_'+save_file_name.split('.')[0]+'.j'
+            # })
 
         #upload file to seafile cloud
         upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
@@ -690,6 +705,7 @@ def comp_sizes():
         201
     )
 
+<<<<<<< HEAD
 # @seafile_client.route("/qm_job", methods=['GET'])
 # def create_job():
 #     if request.method != 'GET':
@@ -700,3 +716,14 @@ def comp_sizes():
 #     qm_api_server = "http://192.168.1.10:2361/api/v1.1/"
 #     response = requests.get(url=qm_api_server)
 #     return str(response.text)
+=======
+def create_job(data):
+    server = 'http://192.168.1.16:9999/create_job'
+
+    res = requests.post(url=server, json=data)
+
+    if res.status_code != 200:
+        return res.text
+    else:
+        return res.text
+>>>>>>> 8a8b44d8669acb27fa479e1b9d91d969385f7948
