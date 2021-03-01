@@ -39,6 +39,11 @@ seafile_client = Blueprint(
     static_folder="static"
 )
 
+# @seafile_client.after_request
+# def check_login():
+#     if 'seafile_token' not in session:
+#         return redirect(url_for('seafile_client.login'))
+
 @seafile_client.route('/')
 @seafile_client.route('/index')
 @seafile_token_require
@@ -54,6 +59,9 @@ def login():
     param required: password
     return login token from seafile server
     """
+    if 'seafile_token' in session:
+        return redirect(url_for('seafile_client.dir_items'))
+
     if request.method == 'POST':
         email = request.form.get('email')
         _password = request.form.get('password')
@@ -201,8 +209,8 @@ def sub_dir():
         dir_name=dir_name, 
         repo_id=repo_id, 
         dir_fullpath=dir_fullpath,
-        job_email = session["current_user"],
-        job_username = session["current_user"]
+        job_email=session['current_user'],
+        job_username=session['username']
     )
 
 def download_mscf_file(repo_id, file_full_path, parent_dir):
@@ -658,7 +666,7 @@ def logout():
     """
     after user logout, their files in tmp folder will be deleted
     """
-    if (session['seafile_token']):
+    if 'seafile_token' in session:
         # session['current_user'] = ''
         user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
         # return user_tmp_dir
@@ -667,6 +675,8 @@ def logout():
         else:
             return 'there is no folder user'
         session['seafile_token'] = ''
+        session['current_user'] = ''
+        session['username'] = ''
         return redirect(url_for('seafile_client.index'))
     else:
         return redirect(url_for('seafile_client.login'))
@@ -705,18 +715,6 @@ def comp_sizes():
         201
     )
 
-<<<<<<< HEAD
-# @seafile_client.route("/qm_job", methods=['GET'])
-# def create_job():
-#     if request.method != 'GET':
-#         return jsonify({'msg':'method must be GET'})
-
-#     data = request.json()
-
-#     qm_api_server = "http://192.168.1.10:2361/api/v1.1/"
-#     response = requests.get(url=qm_api_server)
-#     return str(response.text)
-=======
 def create_job(data):
     server = 'http://192.168.1.16:9999/create_job'
 
@@ -726,4 +724,3 @@ def create_job(data):
         return res.text
     else:
         return res.text
->>>>>>> 8a8b44d8669acb27fa479e1b9d91d969385f7948
