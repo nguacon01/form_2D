@@ -461,8 +461,8 @@ def edit_mscf():
                 for option in defaut_options:
                     config_dict[option] = config.get(section, option, default_config.get(section, option))
                     # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
-                    szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
-                    config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
+                    # szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
+                    # config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
             else:
                 for option in defaut_options:
                     config_dict[option] = default_config.get(section, option)
