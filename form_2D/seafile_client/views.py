@@ -39,11 +39,6 @@ seafile_client = Blueprint(
     static_folder="static"
 )
 
-# @seafile_client.after_request
-# def check_login():
-#     if 'seafile_token' not in session:
-#         return redirect(url_for('seafile_client.login'))
-
 @seafile_client.route('/')
 @seafile_client.route('/index')
 @seafile_token_require
