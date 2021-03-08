@@ -510,9 +510,9 @@ def edit_mscf():
         # urqrd_iterations = 1
         config_dict['urqrd_iterations']= 1
 
-        config_dict['tempdir'] = "/tmp/processing/"
+        config_dict['tempdir'] = "/tmp"
         config_dict['infile'] = "ser.msh5"
-        config_dict['outfile'] = "{project_name}/{config_filename}_mr.msh5".format(
+        config_dict['outfile'] = "{config_filename}_mr.msh5".format(
             project_name = project_name,
             config_filename = save_file_name.split(".")[0]
         )

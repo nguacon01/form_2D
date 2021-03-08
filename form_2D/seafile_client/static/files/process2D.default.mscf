@@ -49,8 +49,7 @@ compress_level = 3.0
 # interfile is not defined, the intermediate file will be temporary created in directory tempdir
 # be carful, the intermediate file can be big - usually twice the final file
 # directory for temporary files
-# tempdir = /tmp/processing/
-tempdir = .
+tempdir = /tmp/processing/
 
 # sizemultipliers tells the program the size of the final 2D, as multiples of the initial (acquisition) sizes
 sizemultipliers = 1.0 1.0
