@@ -39,6 +39,11 @@ seafile_client = Blueprint(
     static_folder="static"
 )
 
+# @seafile_client.after_request
+# def check_login():
+#     if 'seafile_token' not in session:
+#         return redirect(url_for('seafile_client.login'))
+
 @seafile_client.route('/')
 @seafile_client.route('/index')
 @seafile_token_require
@@ -198,7 +203,15 @@ def sub_dir():
         if item['name'].endswith('.mscf') and item['parent_dir'] in dir_fullpath:
             mscf_file = SeafFile(repo=repo, name=item['name'], type='file', parent_dir=item['parent_dir'])
             data.append(mscf_file)
-    return render_template('seafile_client/sub_dir.html', data=data, dir_name=dir_name, repo_id=repo_id, dir_fullpath=dir_fullpath)
+    return render_template(
+        'seafile_client/sub_dir.html', 
+        data=data, 
+        dir_name=dir_name, 
+        repo_id=repo_id, 
+        dir_fullpath=dir_fullpath,
+        job_email=session['current_user'],
+        job_username=session['username']
+    )
 
 def download_mscf_file(repo_id, file_full_path, parent_dir):
     """
@@ -653,7 +666,7 @@ def logout():
     """
     after user logout, their files in tmp folder will be deleted
     """
-    if (session['seafile_token']):
+    if 'seafile_token' in session:
         # session['current_user'] = ''
         user_tmp_dir = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
         # return user_tmp_dir
@@ -662,6 +675,8 @@ def logout():
         else:
             return 'there is no folder user'
         session['seafile_token'] = ''
+        session['current_user'] = ''
+        session['username'] = ''
         return redirect(url_for('seafile_client.index'))
     else:
         return redirect(url_for('seafile_client.login'))
