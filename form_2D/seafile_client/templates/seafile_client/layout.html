@@ -44,7 +44,7 @@ Author :
                                 <a></a>
                             </p>
                             {% if(session['seafile_token']) %}
-                            <p class="btn-logout"><a href='{{url_for("seafile_client.logout")}}'>Log out<i class='fa fa-plus'></i></a></p>
+                            <p class="btn-logout btn btn-danger"><a href='{{url_for("seafile_client.logout")}}'>Log out<i class='fa fa-plus'></i></a></p>
                             {% endif %}
                             <style>
                                 .btn-logout{

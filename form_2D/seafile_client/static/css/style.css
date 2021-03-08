@@ -12,3 +12,13 @@ a{
     text-align: center;
     vertical-align: middle;
 }
+.btn-danger, .btn-danger:hover{
+    background-color: crimson;
+}
+.btn-danger:hover{
+    background-color: #d43f3a;
+}
+.mscf-item{
+    border-bottom: 1px dashed;
+    padding-bottom: 10px;
+}

@@ -1,14 +1,15 @@
 {% extends "seafile_client/layout.html" %}
 {% block content %}
+<link rel="stylesheet" href="{{url_for('seafile_client.static', filename='css/style.css')}}">
 <script src="{{url_for('seafile_client.static', filename='js/sub_dir.js')}}"></script>
 <div class="container not-home seafile-page">
     <h3>Directory: {{dir_name}}</h3>
     <div class="col-md-6">
         <ul class="list-group">
             {% for item in data %}
-                <li class="">
+                <li class="mscf-item">
                     <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.edit_mscf', file_full_path=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, config_filename=item.name)}}">{{item.name}}</a>       
-                    <button class="create_job"
+                    <button class="create_job btn btn-danger"
                         job_email={{job_email}}
                         mscf_file={{item.name}}
                         job_name={{item.name}}
@@ -18,10 +19,18 @@
                 </li>
             {% endfor %}
                 <li class="">
-                    <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.edit_mscf', file_full_path='', repo_id=repo_id, parent_dir=dir_fullpath, config_filename='new.mscf')}}">create new</a>                
+                    <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.edit_mscf', file_full_path='', repo_id=repo_id, parent_dir=dir_fullpath, config_filename='new.mscf')}}">Create new</a>                
                 </li>
         </ul>
     </div>
+    <style>
+        .create_job{
+            display: block;
+            float: right;
+            margin: -40px 10px 0px;
+            padding: 10px;
+        }
+    </style>
 </div>
     
 {% endblock content %}

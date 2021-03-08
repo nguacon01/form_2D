@@ -96,7 +96,7 @@ ul{
   } */
   
   
-  .btn, .btn:hover {
+  /* .btn, .btn:hover {
     color:#fff;
     -webkit-transition: background 0.3s ease-in-out;
     -moz-transition: background 0.3s ease-in-out;
@@ -114,7 +114,7 @@ ul{
       padding: 12px 25px;
       font-size: 16px;
       text-shadow: none!important;
-  }
+  } */
   /* form .btn {
       color:#333!important;
   } */
@@ -129,6 +129,9 @@ ul{
   .row.no-gutters > [class*=" col-"] {
     padding-right: 0;
     padding-left: 0;
+  }
+  a, a:hover{
+    text-decoration: none;
   }
   
   
@@ -698,4 +701,7 @@ ul{
 .hvr-sweep-to-right::before{
   background: #f59f00;
   color:#fff
+}
+.list-group{
+  padding-bottom: 50px;
 }
