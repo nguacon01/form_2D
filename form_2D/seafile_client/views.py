@@ -46,7 +46,6 @@ def index():
     return redirect(url_for('seafile_client.dir_items'))
 
 @seafile_client.route('/login', methods = ['POST', 'GET'])
-# @login_required
 def login():
     """
     Login page
@@ -54,7 +53,7 @@ def login():
     param required: password
     return login token from seafile server
     """
-    if 'seafile_token' in session:
+    if 'seafile_token' in session and session['seafile_token'] != '':
         return redirect(url_for('seafile_client.dir_items'))
 
     if request.method == 'POST':
@@ -100,7 +99,6 @@ def login():
 
 
 @seafile_client.route('/list_repositories')
-# @login_required
 @seafile_token_require
 def list_repositories():
     """
@@ -458,6 +456,7 @@ def edit_mscf():
         # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
         szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
         config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
+        config_dict['peakpicking'] = config.get( "peak_picking", 'peakpicking', 'True')
         # return config_dict
     else:
         proc_params.load(default_config)
@@ -471,6 +470,7 @@ def edit_mscf():
 
     # Set value for select forms
     form.compress_outfile.data = str(config_dict["compress_outfile"])
+    form.peakpicking.data = str(config_dict["peakpicking"])
     form.do_sane.data = str(config_dict.get("do_sane", "False"))
     form.format.data = str(config_dict.get("format", "solarix"))
     form.samplingfile.data = str(config_dict.get("samplingfile"))
@@ -553,14 +553,6 @@ def edit_mscf():
             # save the new config file
             default_config.write(save)
             save.write("\n# EDITTED BY {} at {}".format(session['current_user'], datetime.now()))
-
-            # create a job in queue manager (QM)
-            # create_job(data={
-            #     'mscf_file' : save_file_name,
-            #     'email' : session['current_user'],
-            #     'directory' : project_dict['name'],
-            #     'job_name' : 'job_'+project_dict['name'].split('.')[0]+'_'+save_file_name.split('.')[0]+'.j'
-            # })
 
         #upload file to seafile cloud
         upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
@@ -667,8 +659,6 @@ def logout():
         # return user_tmp_dir
         if os.path.isdir(user_tmp_dir):
             shutil.rmtree(user_tmp_dir)
-        else:
-            return 'there is no folder user'
         session['seafile_token'] = ''
         session['current_user'] = ''
         session['username'] = ''
@@ -710,12 +700,3 @@ def comp_sizes():
         201
     )
 
-def create_job(data):
-    server = 'http://192.168.1.16:9999/create_job'
-
-    res = requests.post(url=server, json=data)
-
-    if res.status_code != 200:
-        return res.text
-    else:
-        return res.text
