@@ -8,6 +8,9 @@ $(document).ready(function(){
             $(".peakpicking_child").addClass('hidden');
         }
     });
+    if($("#peakpicking").val() == "False"){
+        $(".peakpicking_child").addClass('hidden');
+    }
 
     if($("#do_sane").val() == "False"){
         $(".do_sane_child").addClass('hidden');
