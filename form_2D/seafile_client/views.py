@@ -54,6 +54,9 @@ def login():
     param required: password
     return login token from seafile server
     """
+    if 'seafile_token' in session:
+        return redirect(url_for('seafile_client.dir_items'))
+
     if request.method == 'POST':
         email = request.form.get('email')
         _password = request.form.get('password')
