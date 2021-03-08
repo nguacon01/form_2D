@@ -440,31 +440,49 @@ def edit_mscf():
             return render_template("errors/general_error.html", message="There are some problems with mscf file. Please contact your administrator.")
         # load config data into proc_params object
         # test all sections are present for a valid file
-        test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
-        if test  != [True, True, True]:
-            return render_template("errors/general_error.html", message="There are some problems with mscf file. Please contact your administrator.")
+        # test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
+        # if test  != [True, True, True]:
+        #     return render_template("errors/general_error.html", message="There are some problems with mscf file. Please contact your administrator.")
         try:
             proc_params.load(config)
         except:
             return render_template("errors/general_error.html", message="Your config file has error.") 
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
-        # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
-        config_dict['highmass'] = config.getfloat( "import", 'highmass', 0.0)
-        # set config_dict['F1_specwidth'] = F1_specwidth in the the existed config file
-        config_dict['F1_specwidth'] = config.getfloat( "import", 'F1_specwidth', 0.0)
-        # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
-        szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
-        config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
-        config_dict['peakpicking'] = config.get( "peak_picking", 'peakpicking', 'True')
-        # return config_dict
+
+        # get all sections in existed config file
+        config_sections = config.sections()
+        # fetch sections in defaut sections list
+        for section in default_sections:
+            defaut_options = default_config.options(section)
+            # if defaut section is in config sections list, get its options list
+            if section in config_sections:
+                config_options = config.options(section)
+                for option in defaut_options:
+                    config_dict[option] = config.get(section, option, default_config.get(section, option))
+                    # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
+                    szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
+                    config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
+            else:
+                for option in defaut_options:
+                    config_dict[option] = default_config.get(section, option)
+
+
+        # # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
+        # config_dict['highmass'] = config.getfloat( "import", 'highmass', 0.0)
+        # # set config_dict['F1_specwidth'] = F1_specwidth in the the existed config file
+        # config_dict['F1_specwidth'] = config.getfloat( "import", 'F1_specwidth', 0.0)
+        # # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
+        # szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
+        # config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
+        # config_dict['peakpicking'] = config.get( "peak_picking", 'peakpicking', 'True')
     else:
         proc_params.load(default_config)
         # convert proc_params to dictionary
         config_dict = proc_params.__dict__
         # set config_dict['F1_specwidth'] = F1_specwidth from the estimate of project data
-        config_dict['F1_specwidth'] = default_config['import']['F1_specwidth']
-        config_dict['sizemultipliers'] = default_config['processing']['sizemultipliers']
+        # config_dict['F1_specwidth'] = default_config['import']['F1_specwidth']
+        # config_dict['sizemultipliers'] = default_config['processing']['sizemultipliers']
     
     # if request.method == "GET":
 
