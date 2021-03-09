@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for, jsonify,send_from_directory, session
-from flask.helpers import make_response
+from flask.helpers import make_response, send_from_directory
 from flask_login import login_required, current_user
 from flask_session import Session
 from numpy.core.fromnumeric import size
@@ -646,25 +646,35 @@ def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
     else:
         return response.text
 
-@seafile_client.route('/del_file')
-def del_file():
+@seafile_client.route('/handle_button', methods=['GET', 'POST','DELETE'])
+def handle_button():
+    if request.method == 'POST':
+        return jsonify({"message":"Method must be GET or DELETE"}), 401
     repo_id = request.args.get('repo_id')
     full_path = request.args.get('full_path')
 
     if not repo_id:
         return "repo_id is not found"
-    request_upload_link = server+f"/api2/repos/{repo_id}/file/?p={full_path}"
+    v = 'api2' if request.method=='GET' else 'api/v2.1'
+    request_link = server+f"/{v}/repos/{repo_id}/file/?p={full_path}"
 
     _headers = {
         'Authorization':'Token {}'.format(session['seafile_token']),
         'Accept' : 'application/json; charset=utf-8; indent=4'
     }
-
-    upload_link_response = requests.delete(url=request_upload_link, headers=_headers)
-    if upload_link_response.status_code == 200:
-        return jsonify(str(upload_link_response.content), 200)
+    if request.method == 'DELETE':
+        response = requests.delete(url=request_link, headers=_headers, verify=False)
+        if response.status_code == 200:
+            return jsonify({"message":"File has been removed"}), 200
+        else:
+            return jsonify({"message":"file has not been removed."}), 401
     else:
-        return "something went wrong"
+        response = requests.get(url=request_link, headers=_headers, verify=False)
+        if response.status_code == 200:
+            return jsonify({"message":"ok", "download_link":response.text.split('"')[1]})
+        else:
+            return jsonify({"message":"You can not download this file."}), 401
+    
 
 @seafile_client.route('/logout')
 def logout():
