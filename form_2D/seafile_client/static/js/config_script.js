@@ -17,6 +17,7 @@ $(document).ready(function(){
     }
     if($("#nus").val() == "False"){
         $(".nus_child").addClass('hidden');
+        $("#samplingfile").html('None');
     }
     if($("#compress_outfile").val() == "False"){
         $(".compress_outfile_child").addClass('hidden');

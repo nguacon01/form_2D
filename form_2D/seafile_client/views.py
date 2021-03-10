@@ -155,20 +155,25 @@ def dir_items():
 
     dir_name='FTICR_DATA'
 
-    # create FTICR_DATA dir object. It is a upstream directory of My Library, so parent_dir is '/' and we no need to declare in object
-    FTICR_DATA_dir = SeafDir(repo=my_library_repo, name=dir_name, type='dir')
-    # load dir items
-    FTICR_DATA_dir.load_entries(recursive=1, type='d')
+    # # create FTICR_DATA dir object. It is a upstream directory of My Library, so parent_dir is '/' and we no need to declare in object
+    # FTICR_DATA_dir = SeafDir(repo=my_library_repo, name=dir_name, type='dir')
+    # # load dir items
+    # FTICR_DATA_dir.load_entries(recursive=1, type='d')
+    directories = my_library_repo.get_items(type="d", recursive=True)
     data = []
-    for item in FTICR_DATA_dir.entries:
-        if item['name'].endswith('.d'):
-            sub_dir = SeafDir(repo=my_library_repo, name=item['name'], type='dir', parent_dir=item['parent_dir'])
+    # for item in FTICR_DATA_dir.entries:
+    for item in directories:
+        # if item['name'].endswith('.d'):
+        if item.name.endswith('.d'):
+            # sub_dir = SeafDir(repo=my_library_repo, name=item['name'], type='dir', parent_dir=item['parent_dir'])
             # check if in .d folder has ser file or not
             try:
                 # check if sub directory of FTICR_DATA has ser file or not
-                re = my_library_repo.get_file(path=sub_dir.full_path+'ser', parent_dir=sub_dir.full_path)
-                if 'FTICR_DATA' in sub_dir.full_path:
-                    data.append(sub_dir)
+                # re = my_library_repo.get_file(path=sub_dir.full_path+'ser', parent_dir=sub_dir.full_path)
+                re = my_library_repo.get_file(path=item.full_path+'ser', parent_dir=item.full_path)
+                # if 'FTICR_DATA' in sub_dir.full_path:
+                #     data.append(sub_dir)
+                data.append(item)
             except:
                 # return render_template("errors/general_error.html", message="There is not a project in which has a ser file.")
                 pass
@@ -195,7 +200,8 @@ def sub_dir():
     for item in dir.entries:
         if item['name'].endswith('.mscf') and item['parent_dir'] in dir_fullpath:
             mscf_file = SeafFile(repo=repo, name=item['name'], type='file', parent_dir=item['parent_dir'])
-            data.append(mscf_file)
+            if dir_name in mscf_file.full_path:
+                data.append(mscf_file)
     return render_template(
         'seafile_client/sub_dir.html', 
         data=data, 
