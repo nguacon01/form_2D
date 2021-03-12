@@ -3,6 +3,10 @@ label{
 }
 small{
     display: block;
+    font-size: 12px;
+}
+b{
+    font-weight: bold;
 }
 .hidden{
     display: none;
@@ -35,7 +39,7 @@ legend{
 }
 .mscf-form{
     width:1200px;
-    font-size: 14spx;
+    font-size: 14px;
     line-height: 1.8em;
 }
 .form-btn{

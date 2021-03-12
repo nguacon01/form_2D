@@ -9,7 +9,9 @@
     flex-direction: column;
 }
 .footer-list{
-    color:#fff
+    color:#fff;
+    font-size: 12px;
+    margin-bottom: 10px;
 }
 .footer-icons{
     display: grid;
