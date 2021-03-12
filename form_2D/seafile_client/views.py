@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, flash, url_for, jsonify,send_from_directory, session
+from flask import Blueprint, render_template, request, redirect
+from flask import flash, url_for, jsonify, session
+# from flask_session import Session
 from flask.helpers import make_response
 from flask_login import login_required, current_user
-from flask_session import Session
 import os
 import requests
 from .forms import ConfigForm
-# from spike import processing as proc_spike
 from spike.NPKConfigParser import NPKConfigParser
 from spike.FTICR import FTICRData
 from spike.File import Solarix, Apex
@@ -88,7 +88,7 @@ def login():
             tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
             if not os.path.exists(tmp_folder_path):
                 os.makedirs(tmp_folder_path)
-            return redirect(url_for('seafile_client.dir_items', current_user = session["current_user"]))
+            return redirect(url_for('seafile_client.dir_items'))
         else:
             flash(message="Login Fail", category="error")
     return render_template('seafile_client/login.html')
@@ -684,9 +684,9 @@ def logout():
         # return user_tmp_dir
         if os.path.isdir(user_tmp_dir):
             shutil.rmtree(user_tmp_dir)
-        session['seafile_token'] = ''
-        session['current_user'] = ''
-        session['username'] = ''
+        session.pop('seafile_token')
+        session.pop('current_user')
+        session.pop('username')
         return redirect(url_for('seafile_client.index'))
     else:
         return redirect(url_for('seafile_client.login'))
