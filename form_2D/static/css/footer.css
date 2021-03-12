@@ -1,0 +1,29 @@
+.footer{
+    bottom: 0;
+    top: 100%;
+}
+.navbar-footer{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.footer-list{
+    color:#fff
+}
+.footer-icons{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-gap: 10px;
+}
+.icon-link{
+    display: inline-block;
+    overflow: hidden;
+    width: 30px;
+}
+.icon-link img{
+    width: 100%;
+}
+.footer-list .icon-link{
+    width: 60px;
+}

@@ -466,7 +466,7 @@ def edit_mscf():
     setattr(proc_params, 'F1_specwidth', config.getfloat( "import", 'F1_specwidth', 50000))
     setattr(proc_params, 'sizemultipliers', config.get( "processing", 'sizemultipliers', '1.0 1.0'))
     setattr(proc_params, 'peakpicking', config.getboolean( "peak_picking", 'peakpicking', True))
-    setattr(proc_params, 'peakpicking_noise_level', config.getint( "peak_picking", 'peakpicking_noise_level', 10))
+    setattr(proc_params, 'peakpicking_noise_level', config.getfloat( "peak_picking", 'peakpicking_noise_level', 10))
     setattr(proc_params, 'centroid', config.getboolean("peak_picking", 'centroid', True))
     setattr(proc_params, 'erase', config.getboolean("peak_picking", 'erase', True))
     

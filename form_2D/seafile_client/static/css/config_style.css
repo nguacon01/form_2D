@@ -19,9 +19,11 @@ small{
     border-radius: 4px;
     transition: visibility 0s linear 0.33s, opacity 0.33s linear;
     transition-delay: 1s;
+    box-sizing: border-box;
 }
 legend{
     font-weight: bold;
+    border-bottom: 1px dashed #333;
 }
 .proj_info{
   margin-bottom: 10px;
@@ -31,6 +33,16 @@ legend{
   box-sizing: border-box;
   padding:5px
 }
-#submitConfig{
-    margin-bottom:50px
+.mscf-form{
+    width:1200px;
+    font-size: 14spx;
+    line-height: 1.8em;
+}
+.form-btn{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    width: 30%;
+    grid-gap: 10px;
+    margin: 20px auto;
+    float: none
 }

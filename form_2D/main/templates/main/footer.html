@@ -1,39 +1,29 @@
-    <nav class="navbar navbar-inverse navbar-fixed-bottom" style="background-color: #0A2B3D;height:40px">
-        <div class="navbar-footer">
-            <div class="container">
-                <div class="col-md-3 col-12">
-                    <p style="color:white;font-size: 11px" class="navbar-text">
-                        <a></a>
+        <nav class="navbar footer">
+            <div class="navbar-footer">
+                <div class="footer-list">
+                    <p class="navbar-text-center">
+                        <strong>
+                            <a href="http://www.casc4de.eu/" class="icon-link">
+                                <img alt="Bootstrap Image Preview" src="{{url_for('seafile_client.static', filename = 'img/casc4de_logo_complete.png')}}"/>
+                            </a>
+                             | <a href="">Terms and conditions</a> | <a href="/contact"> Contact us </a></strong>
+                        <br>
                     </p>
                 </div>
-                <div class="col-md-6 col-12" style="text-align: center">
-                    <p style="color:white;font-size: 11px;align-content: center; vertical-align: bottom;padding-top: 7px"
-                        class="navbar-text-center">
-                        <strong>Casc4de 2019 | <a href="">Terms and conditions</a>
-                            |<a href="/contact"> Contact us </a></strong><br>
-                        <a href="http://www.casc4de.eu/"><img alt="Bootstrap Image Preview"
-                                src="{{url_for('seafile_client.static', filename = 'img/casc4de_logo_complete.png')}}"
-                                style="width:auto;height:20px" /></a>
-                    </p>
-                </div>
-                <div class="col-md-3 col-12" style="text-align: right;padding-top: 15px">
-                    <p style="color:white;font-size: 11px;align-content: right; vertical-align: bottom;"
-                        class="navbar-text-center">
-                        <a href="https://github.com/"><img alt="Bootstrap Image Preview"
-                                src="{{url_for('seafile_client.static', filename = 'img/bitbucketlogo.png')}}"
-                                style="width:auto;height:20px;padding-right: 2px;padding-left: 2px" /></a>
-                        <a href="https://twitter.com/_casc4de_"><img
-                                src="{{url_for('seafile_client.static', filename = 'img/Twitter_Bird.png')}}"
-                                style="width:auto;height:20px;padding-right: 2px;padding-left: 2px" /></a>
-                    </p>
-                </div>
+                <ul class="footer-icons">
+                    <li>
+                        <a href="https://github.com/" class="icon-link">
+                            <img alt="Bootstrap Image Preview" src="{{url_for('seafile_client.static', filename = 'img/bitbucketlogo.png')}}"/>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/_casc4de_" class="icon-link">
+                            <img src="{{url_for('seafile_client.static', filename = 'img/Twitter_Bird.png')}}"/>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </nav>
-    </div>
-    <!-- Notification -->
-    <div role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="true">
-        <div class="toast-body"></div>
+        </nav>
     </div>
 </body>
 </html>

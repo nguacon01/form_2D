@@ -12,6 +12,8 @@ def compile_static_assets(assets):
         # "css/casc4de_typography.css",
         "css/hover.css",
         "css/style.css",
+        "css/navbar.css",
+        "css/footer.css",
         filters="cssmin",
         output="gen/main_style.css",
         extra={"rel":"stylesheet/css", "id":"assetscss"}

@@ -1,8 +1,8 @@
 {% extends "main/layout.html" %}
 {% block content %}
 <link href="{{url_for('seafile_client.static', filename = 'css/style.css')}}" rel="stylesheet">
-<div class="container not-home seafile-page">
-    <div class="col-md-6">
+<div class="seafile-page">
+    <div class="">
         <h1>Greeting!!</h1>
         {% if current_user %}
         <h3>Welcome to SeaFile, {{current_user}}</h3>

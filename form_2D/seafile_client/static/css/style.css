@@ -1,42 +1,53 @@
-a{
-    font-size: 14px;
+.seafile-page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin:0;
 }
-.logout-btn a, .login-btn a{
-    color: #f8f9fa;
-    display:table-cell;
-    height:40px;
-    background: #f59f00;
-    border-width: 0;
-    border-radius: 4px;
-    width: 200px;
-    text-align: center;
-    vertical-align: middle;
+.seafile-container{
+    width: 1200px;
+    margin: 20px 0;
 }
 .mscf_item_btn{
     display: block;
     float: right;
-    margin: -40px 10px 0px;
-    padding: 10px;
-}
-.btn-danger{
-    background-color: crimson;
-}
-.btn-danger:hover{
-    background-color: #d43f3a;
-}
-.btn-warning{
-    background-color: #f0ad4e;
-}
-.btn-warning:hover{
-    background-color: #eea236;
-}
-.btn-success{
-    background-color: #449d44;
-}
-.btn-success:hover{
-    background-color: #398439;
 }
 .mscf-item{
     border-bottom: 1px dashed;
     padding-bottom: 10px;
+}
+.seafile-list{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+}
+.seafile-list .list-item{
+    display: flex;
+    flex: 1;
+    margin: 0 1rem;
+    width: 60%;
+    margin: 10px 0 0;
+}
+.hvr-sweep-to-right::before{
+    background: #f59f00;
+    color:#fff
+}
+.seafile-list .list-item a{
+    padding:10px;
+    color: #333;
+    display:block;
+    width: 100%;
+    border:solid 1px #f59f00;
+}
+.seafile-list h3{
+    text-transform: uppercase;
+    font-weight: bold;
+    margin:10px 0;
+    font-size: 16px;
+    text-align: center;
+    width: 100%;
+    border-bottom: solid 1px #f59f00;
+    padding: 10px 0
 }

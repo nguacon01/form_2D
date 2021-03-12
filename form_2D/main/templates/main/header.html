@@ -1,4 +1,4 @@
-<html lang="fr-FR" class="js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths js_active vc_desktop vc_transform vc_transform wf-opensans-n3-active wf-opensans-n4-active wf-active">
+<html lang="fr-FR" class="">
 
 <head>
     <meta charset="UTF-8">
@@ -39,48 +39,27 @@
 
 </head>
 <body>
-    <!-- To push footer to page bottom -->
     <div id="globalWrapper">
-        <!------header------>
-        <div class="navbar-wrapper">
-            <div class="container"
-                style="padding-right: 0px !important; padding-left: 0px !important; margin-right: auto; margin-left: auto; width: auto !important;">
-                <nav class="navbar navbar-inverse navbar-static-top"
-                    style="background-color: #0A2B3D;padding-right: 0px !important; padding-left: 0px !important; margin-right: auto; margin-left: auto; width: auto !important; margin-bottom: 0px">
-                    <div class="container" id="nav-container"
-                        style="padding-right: 0px !important; padding-left: 0px !important; margin-right: auto; margin-left: auto; width: auto !important;">
-                        <div class="col-md-3">
-                            <p style="color:white;font-size: 11px" class="navbar-text">
-                                <a href="/"><img alt="Bootstrap Image Preview"
-                                        src="{{url_for('seafile_client.static', filename = 'img/eufticr_whitelogo.png')}}"
-                                        style="width:auto;height:60px" /></a>
-                            </p>
-                            
-                        </div>
-                        <div class="col-md-9" style="text-align: center">
-                            <p style="color:white;font-size: 11px" class="navbar-text">
-                                <a></a>
-                            </p>
-                            {% if(session['seafile_token']) %}
-                            <p class="btn-logout btn btn-danger"><a href='{{url_for("seafile_client.logout")}}'>Log out<i class='fa fa-plus'></i></a></p>
-                            {% endif %}
-                            <style>
-                                .btn-logout{
-                                    border:solid 1px #fff;
-                                    text-align: center;
-                                    padding: 10px;
-                                    margin: 20px auto;
-                                    float: right;
-                                }
-                                .btn-logout > a{
-                                    color:#fff;
-                                    font-size: 14px;
-                                    display: inline-block
-                                }
-                            </style>
-                        </div>
-                    </div>
-                </nav>
-                <!-- The Bootstrap Modal (popup) -->
-            </div><!-- /container -->
-        </div>
+        <nav class="navbar header">
+            <div class="navbar-wrapper">
+                <div class="navbar-container">
+                    <a href="/" class="navbar-logo">
+                        <img alt="CasC4de"
+                            src="{{url_for('seafile_client.static', filename = 'img/eufticr_whitelogo.png')}}"
+                            style="width:auto;height:60px" />
+                    </a>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Home</a>
+                    </li>
+                </ul>
+                {% if(session['seafile_token']) %}
+                <button class="btn-logout btn btn-danger">
+                        <a href='{{url_for("seafile_client.logout")}}'>Log out
+                            <i class='fa fa-plus'></i>
+                        </a>
+                </button>
+                {% endif %}
+            </div>
+        </nav>

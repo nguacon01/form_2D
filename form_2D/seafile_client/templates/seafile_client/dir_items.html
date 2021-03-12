@@ -1,10 +1,11 @@
 {% extends "main/layout.html" %}
 {% block content %}
-<div class="container not-home seafile-page">
-    <div class="col-md-6">
-        <ul class="list-group" style='margin-bottom: 50px;'>
+<link rel="stylesheet" href="{{url_for('seafile_client.static', filename='css/style.css')}}">
+<div class="seafile-page">
+    <div class="seafile-container">
+        <ul class="seafile-list">
             {% for item in data %}
-                <li class="">
+                <li class="list-item">
                     <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.sub_dir', dir_fullpath=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, dir_name=item.name)}}">{{item.name}}</a>       
                 </li>
             {% endfor %}

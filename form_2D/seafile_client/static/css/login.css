@@ -1,3 +1,9 @@
+.login-index{
+    width:100%;
+    height: 100%;
+    overflow: hidden;
+    background-size:auto
+}
 .login-panel{
     background: #f5f6f7;
     border-radius: 3px;
