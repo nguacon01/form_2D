@@ -67,7 +67,7 @@ class ConfigForm(FlaskForm):
         validators=[
         ],
         description="Outfile file is internally compressed by removing the weakest value lost in the noise.",
-        choices=[("True","True"),("False","False")]
+        choices=[(True,"True"),(False,"False")]
     )
     compress_level = StringField(
         "compress_level",
@@ -86,7 +86,7 @@ class ConfigForm(FlaskForm):
     sizemultipliers = StringField(
         "sizemultipliers",
         validators=[
-            Regexp(regex=regexp_sizemultipliers, message = 'sizemultipliers has form "1 1" or "01 01"')
+            Regexp(regex=regexp_sizemultipliers, message = 'sizemultipliers has form "1 1" or "01 01" or "0.1 0.1"')
         ],
         description="Sizemultipliers tells the program the size of the final 2D, as multiples of the initial (acquisition) sizes"
     )
@@ -143,7 +143,7 @@ class ConfigForm(FlaskForm):
         validators=[
         ],
         description="do_sane : if True, the SANE denoising is applied in F1",
-        choices=[("True","True"),("False","False")]
+        choices=[(True,"True"),(False,"False")]
     )
     sane_rank = StringField(
         "sane_rank",
@@ -166,7 +166,7 @@ class ConfigForm(FlaskForm):
         coerce=str,
         validators=[
         ],
-        choices=[("True","True"),("False","False")],
+        choices=[(True,"True"),(False,"False")],
         description="Non Uniform Sampled (NUS)"
     )
     samplingfile = TextAreaField(
@@ -183,7 +183,7 @@ class ConfigForm(FlaskForm):
         ],
         description="The optimal reconstruction algorithm is currently PG_SANE, based SANE (see above, same ref). \
                     Do_pgsane should be True for NUS experiments to be processed.",
-        choices=[("True","True"),("False","False")]
+        choices=[(True,"True"),(False,"False")]
     )
     pgsane_rank = StringField(
         "pgsane_rank",
@@ -224,7 +224,7 @@ class ConfigForm(FlaskForm):
         validators=[
         ],
         description="Peak-Picking is performed automatically on the spectrum.",
-        choices=[("True","True"),("False","False")]
+        choices=[(True,"True"),(False,"False")]
     )
 
     peakpicking_noise_level = StringField(
@@ -240,7 +240,7 @@ class ConfigForm(FlaskForm):
         validators=[
         ],
         description="Each peak position and width is optimized by a 2D centroid.",
-        choices=[("True","True"),("False","False")]
+        choices=[(True,"True"),(False,"False")]
     )
 
     erase = SelectField(
@@ -249,5 +249,5 @@ class ConfigForm(FlaskForm):
         validators=[
         ],
         description="If the output file is already present, it will be erased.",
-        choices=[("True","True"),("False","False")]
+        choices=[(True,"True"),(False,"False")]
     )

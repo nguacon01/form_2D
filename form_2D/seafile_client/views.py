@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for, jsonify,send_from_directory, session
-from flask.helpers import make_response, send_from_directory
+from flask.helpers import make_response
 from flask_login import login_required, current_user
 from flask_session import Session
-from numpy.core.fromnumeric import size
 import os
 import requests
 from .forms import ConfigForm
@@ -12,7 +11,6 @@ from spike.FTICR import FTICRData
 from spike.File import Solarix, Apex
 from datetime import datetime
 from form_2D.libs.EUFT_Spike import processing_4EU as proc_spike
-from form_2D.libs.EUFT_Spike.Tools import FTICR_INTER as FI_tools
 
 from form_2D.libs.seafile_api import custom_seafileapi
 from form_2D.libs.seafile_api.custom_seafileapi.files import SeafDir, SeafFile
@@ -22,9 +20,7 @@ from form_2D.metadata.views import metadata
 from datetime import datetime
 import glob
 from urllib.parse import urlparse
-
-import pandas as pd
-import matplotlib.pyplot as plt
+from pathlib import Path
 
 import shutil
 
@@ -202,6 +198,9 @@ def sub_dir():
             mscf_file = SeafFile(repo=repo, name=item['name'], type='file', parent_dir=item['parent_dir'])
             if dir_name in mscf_file.full_path:
                 data.append(mscf_file)
+    # for go back button or go back link in edit_mscf page
+    # session['prev_url'] = request.referrer
+    # return session['prev_url']
     return render_template(
         'seafile_client/sub_dir.html', 
         data=data, 
@@ -217,7 +216,7 @@ def download_mscf_file(repo_id, file_full_path, parent_dir):
     Download mscf file to a temporary local directory
     """
     # create temp local dir path
-    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'], parent_dir)
+    tmp_folder_path = os.path.join(seafile_client.root_path, 'static/tmp', session['current_user'])
     if not os.path.exists(tmp_folder_path):
             os.makedirs(tmp_folder_path)
     # if file doesnt exist in seafile server, file_full_path is None, then we create a default mscf file in temp local dir
@@ -397,8 +396,8 @@ def mscf_header_info(repo_id, file_full_path, parent_dir):
     if f1 < 1E-3 and f1>0.0:   # seems legit
         f1_specwidth = round(1.0/(2*f1),2)
     else:
-        f1_specwidth = 50000
-    project_dict["f1_specwidth"] = f1_specwidth
+        f1_specwidth = 50000.0000
+    project_dict["F1_specwidth"] = f1_specwidth
     return project_dict
 
 @seafile_client.route('/edit_mscf', methods=['GET', 'POST'])
@@ -412,7 +411,6 @@ def edit_mscf():
     file_full_path = request.args.get('file_full_path')
     config_filename = request.args.get('config_filename')
     parent_dir = request.args.get('parent_dir')
-    parent_dir = parent_dir
     project_name = parent_dir.strip('/').split('/')[-1]
     # create experiment config form
     form = ConfigForm()
@@ -428,130 +426,133 @@ def edit_mscf():
     # default config file
     default_conf_file = os.path.join(metadata.root_path, "static", "files", "process2D.default.mscf")
 
+    # read mscf defaut file
     default_config = NPKConfigParser()
+    # disale Configparser converts all options into lowercase
+    default_config.optionxform = str
     default_config.readfp(open(default_conf_file,'r'))
-
     # ['import', 'processing', 'peak_picking']
     default_sections = default_config.sections()
 
     # create processing params object base on Proc_Parameters() object in spike lib
     proc_params = proc_spike.Proc_Parameters()
 
+    # create preveous link. This is for go back button
+    session['prev_url'] = request.referrer
     # check if the mscf config file is existed or not. If not, create new file with default values
     if os.path.isfile(local_config_file_path):
         config = NPKConfigParser()
+        # disale Configparser converts all options into lowercase
+        config.optionxform = str
         try:
             config.readfp(open(local_config_file_path, 'r'))
-        except Exception:
-            return render_template("errors/general_error.html", message="There are some problems with mscf file. Please contact your administrator.")
-        # load config data into proc_params object
-        # test all sections are present for a valid file
-        # test = [ (sec in ['import', 'processing', 'peak_picking']) for sec in config.sections()]
-        # if test  != [True, True, True]:
-        #     return render_template("errors/general_error.html", message="There are some problems with mscf file. Please contact your administrator.")
-        try:
-            proc_params.load(config)
-        except:
-            return render_template("errors/general_error.html", message="Your config file has error.") 
-        # convert proc_params to dictionary
-        config_dict = proc_params.__dict__
+            proc_params.load(config, verif=False)
+        except Exception as e:
+            return render_template("errors/general_error.html", message=repr(e))
+        # config_dict = proc_params
 
         # get all sections in existed config file
         config_sections = config.sections()
         # fetch sections in defaut sections list
         for section in default_sections:
-            defaut_options = default_config.options(section)
+            # defaut_options = default_config.options(section)
             # if defaut section is in config sections list, get its options list
-            if section in config_sections:
-                config_options = config.options(section)
-                for option in defaut_options:
-                    config_dict[option] = config.get(section, option, default_config.get(section, option))
-                    # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
-                    # szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
-                    # config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
-            else:
-                for option in defaut_options:
-                    config_dict[option] = default_config.get(section, option)
-
-
-        # # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
-        # config_dict['highmass'] = config.getfloat( "import", 'highmass', 0.0)
-        # # set config_dict['F1_specwidth'] = F1_specwidth in the the existed config file
-        # config_dict['F1_specwidth'] = config.getfloat( "import", 'F1_specwidth', 0.0)
-        # # proc_params.szmlist is a array. But in the form, it must be a string with a space between 2 digits (for Regex rule which was setted in the form)
-        # szmlist = f"{proc_params.szmlist[0]} {proc_params.szmlist[1]}"
-        # config_dict['sizemultipliers'] = config.get( "import", 'sizemultipliers', szmlist)
-        # config_dict['peakpicking'] = config.get( "peak_picking", 'peakpicking', 'True')
+            if section not in config_sections:
+                config_options = default_config.options(section)
+                for option in config_options:
+                    setattr(proc_params, option, default_config.get(section, option))
     else:
         proc_params.load(default_config)
-        # convert proc_params to dictionary
-        config_dict = proc_params.__dict__
-        # set config_dict['F1_specwidth'] = F1_specwidth from the estimate of project data
-        # config_dict['F1_specwidth'] = default_config['import']['F1_specwidth']
-        # config_dict['sizemultipliers'] = default_config['processing']['sizemultipliers']
+        # config_dict = proc_params
+    # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
+    setattr(proc_params, 'highmass', config.getfloat( "import", 'highmass', 0.0))
+    setattr(proc_params, 'F1_specwidth', config.getfloat( "import", 'F1_specwidth', 50000))
+    setattr(proc_params, 'sizemultipliers', config.get( "processing", 'sizemultipliers', '1.0 1.0'))
+    setattr(proc_params, 'peakpicking', config.getboolean( "peak_picking", 'peakpicking', True))
+    setattr(proc_params, 'peakpicking_noise_level', config.getint( "peak_picking", 'peakpicking_noise_level', 10))
+    setattr(proc_params, 'centroid', config.getboolean("peak_picking", 'centroid', True))
+    setattr(proc_params, 'erase', config.getboolean("peak_picking", 'erase', True))
     
-    # if request.method == "GET":
+    
+    ### SET DEFAULT VALUES FOR OUTPUT CONFIG FILE###
+    # do_F2 = True
+    setattr(proc_params,'do_F2', 'True')
+    # do_F1 = True
+    setattr(proc_params,'do_F1', 'True')
+    # do_f1demodu = True
+    setattr(proc_params,'do_f1demodu', 'True')
+    # do_modulus = True
+    setattr(proc_params,'do_modulus', 'True')
+    # do_rem_ridge = True
+    setattr(proc_params,'do_rem_ridge', 'True')
+    # urqrd_rank = 30
+    setattr(proc_params,'urqrd_rank', 30)
+    # urqrd_iterations = 1
+    setattr(proc_params,'urqrd_iterations', 1)
+
+    setattr(proc_params, 'tempdir', "/tmp")
+    setattr(proc_params, 'infile', "ser.msh5")
 
     # Set value for select forms
-    form.compress_outfile.data = str(config_dict["compress_outfile"])
-    form.peakpicking.data = str(config_dict["peakpicking"])
-    form.do_sane.data = str(config_dict.get("do_sane", "False"))
-    form.format.data = str(config_dict.get("format", "solarix"))
-    form.samplingfile.data = str(config_dict.get("samplingfile"))
-    if config_dict.get("samplingfile") == 'None' or config_dict.get("samplingfile") == '':
+    form.compress_outfile.data = str(getattr(proc_params, 'compress_outfile', True))
+    form.peakpicking.data = str(getattr(proc_params, 'peakpicking', True))
+    form.centroid.data = str(getattr(proc_params, 'centroid', True))
+    form.erase.data = str(getattr(proc_params, 'erase', True))
+    form.do_sane.data = str(getattr(proc_params, 'do_sane', True))
+    form.format.data = str(getattr(proc_params, 'format', 'Solarix'))
+    form.samplingfile.data = getattr(proc_params, 'samplingfile', None)
+    if proc_params.samplingfile == 'None' or proc_params.samplingfile is None:
         # by default, N.U.S field is False
+        form.do_pgsane.data = str(False)
         form.nus.data = str(False)
-    else: form.nus.data = str(True)
+    else: 
+        form.nus.data = str(True)
+        form.do_pgsane.data = str(True)
     form.save_file.data = str(config_filename.split(".")[0])
         
     if form.validate_on_submit():
         
         # get form data
         data = request.form.to_dict()
-        # fill up config_dict with data from form
         
         for key, val in data.items():
-            config_dict[key] = val
+            if val=="True": val=True
+            if val=="False": val=False
+            setattr(proc_params, key, val)
 
-        config_dict["format"] = data["format"].capitalize()
+        setattr(proc_params, 'format', data["format"].capitalize())
 
         # defind output file
         save_file_name = data['save_file'].split('.')[0] + ".mscf"
 
-        ### SET DEFAULT VALUES FOR OUTPUT CONFIG FILE###
-        # do_F2 = True
-        config_dict['do_F2'] =True
-        # do_F1 = True
-        config_dict['do_F1'] =True
-        # do_f1demodu = True
-        config_dict['do_f1demodu'] =True
-        # do_modulus = True
-        config_dict['do_modulus'] =True
-        # do_rem_ridge = True
-        config_dict['do_rem_ridge'] =True
-        # urqrd_rank = 30
-        config_dict['urqrd_rank'] =30
-        # urqrd_iterations = 1
-        config_dict['urqrd_iterations']= 1
-
-        config_dict['tempdir'] = "/tmp"
-        config_dict['infile'] = "ser.msh5"
-        config_dict['outfile'] = "{config_filename}_mr.msh5".format(
+        setattr(proc_params, 'outfile', "{config_filename}_mr.msh5".format(
             project_name = project_name,
-            config_filename = save_file_name.split(".")[0]
+            config_filename = save_file_name.split(".")[0])
         )
 
         #NUS - Non Uniform Sampled
-        if data["nus"] == False:
-            config_dict["do_pgsane"] = False
-        else:
-            config_dict["do_pgsane"] = True
+        if data["nus"] == 'True':
+            setattr(proc_params, 'do_pgsane', True)
+            setattr(proc_params, 'samplingfile', data["samplingfile"])
 
+        else:
+            setattr(proc_params, 'do_pgsane', False)
+            setattr(proc_params, 'samplingfile', None)
+            
+        try:
+            proc_params.verify()
+            # clear flash message
+            session.pop('_flashes', None)
+        except Exception as e:
+            flash(repr(e))
+            return redirect(request.referrer)
         # create a new config file
         save_file_path = os.path.join(local_project_path, save_file_name)
 
         # in case file name is changed during the modification
         file_full_path = os.path.join(parent_dir, save_file_name)
+
+        # return proc_params.__dict__
 
         with open(save_file_path, "w") as save:
             # write header of config file
@@ -564,40 +565,38 @@ def edit_mscf():
                 "#Excitation pulses from {}Hz (m/z={}) to {}Hz (m/z={}) \n".format(project_dict['mzh'], project_dict['freqh'], project_dict['mzl'], project_dict['freql']) +
                 "#Acquisition spectral width: {}Hz (low mass: {}) \n".format(project_dict['f2_specwidth'], project_dict['lowmass']) 
             )
-            for section in default_sections:
+            for sect in default_sections:
                 # config_key and its value which are got from submited form
-                for config_key, val in config_dict.items():
+                for opt in default_config.options(sect):
                     try: 
+                        defaut_value = default_config.get(sect, opt, None)
                         # if config section match with sections in default config file, then change value in default file
-                        if default_config.get(section, config_key):
-                            default_config.set(section, config_key, val)
-                    except Exception:
+                        default_config.set(section=sect, option=opt, value=str(getattr(proc_params, opt, defaut_value)))
+                    except Exception as e:
+                        # return repr(e)
                         pass
-            
-            # save the new config file
+            # save the new config file)
             default_config.write(save)
             save.write("\n# EDITTED BY {} at {}".format(session['current_user'], datetime.now()))
-
         #upload file to seafile cloud
-        upload_edited_file(repo_id, file_full_path, parent_dir, save_file_path)
-        # allow user to download it
-        # return send_from_directory(directory=local_project_path, filename=save_file_name, as_attachment=True)
-
+        upload_edited_file(repo_id, parent_dir, save_file_path)
+        
         #remove temp file
-        os.remove(save_file_path)
+        if Path(save_file_path).exists():
+            Path(save_file_path).unlink()
+        return redirect(url_for('seafile_client.dir_items'))
 
     return render_template(
         "seafile_client/edit_mscf.html",
-        config_dict = config_dict,
+        config_dict = proc_params,
         project_dict = project_dict,
         form = form, errors = form.errors,
         config_filename = config_filename,
         repo_id=repo_id,
         file_full_path = file_full_path,
-        parent_dir=parent_dir
+        parent_dir=parent_dir,
+        prev_url = session['prev_url']
     )
-
-    return render_template('seafile_client/edit_mscf.html')
 
 def get_upload_link(_repo_id, parent_dir):
     if not _repo_id:
@@ -618,20 +617,17 @@ def get_upload_link(_repo_id, parent_dir):
         re_upload_link = server + upload_path
         return re_upload_link
     else:
-        return "something went wrong"
+        return 'Can not get upload link'
 
 
-def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
-    _, filename = os.path.split(file_full_path)
+def upload_edited_file(repo_id, parent_dir, local_file_path):
+    _, filename = os.path.split(local_file_path)
 
     # client = custom_seafileapi.connect(server, token=session['seafile_token'])
     # repo = client.repos.get_repo(repo_id)
     # current_file = repo.get_file(file_full_path, parent_dir)
     # upload_link = current_file._get_upload_link()
     upload_link = get_upload_link(repo_id, parent_dir)
-    
-    if not upload_link:
-        return "something went wrong"
 
     _headers = {
         'Authorization':'Token {}'.format(session['seafile_token'])
@@ -647,9 +643,7 @@ def upload_edited_file(repo_id, file_full_path, parent_dir, local_file_path):
     }
 
     response = requests.post(url=upload_link, headers=_headers, data=_data, files=_files, verify=False)
-    if response.status_code == 200:
-        return response.text
-    else:
+    if response.status_code != 200:
         return response.text
 
 @seafile_client.route('/handle_button', methods=['GET', 'POST','DELETE'])
