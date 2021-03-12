@@ -442,20 +442,18 @@ def edit_mscf():
     # check if the mscf config file is existed or not. If not, create new file with default values
     if os.path.isfile(local_config_file_path):
         config = NPKConfigParser()
-        # disale Configparser converts all options into lowercase
+        # disable Configparser converts all options into lowercase
         config.optionxform = str
         try:
             config.readfp(open(local_config_file_path, 'r'))
             proc_params.load(config, verif=False)
         except Exception as e:
             return render_template("errors/general_error.html", message=repr(e))
-        # config_dict = proc_params
 
         # get all sections in existed config file
         config_sections = config.sections()
         # fetch sections in defaut sections list
         for section in default_sections:
-            # defaut_options = default_config.options(section)
             # if defaut section is in config sections list, get its options list
             if section not in config_sections:
                 config_options = default_config.options(section)
@@ -463,7 +461,6 @@ def edit_mscf():
                     setattr(proc_params, option, default_config.get(section, option))
     else:
         proc_params.load(default_config)
-        # config_dict = proc_params
     # highmass and F1_specwidth are not in Proc_Parameters object so add them in config_dict manually.
     setattr(proc_params, 'highmass', config.getfloat( "import", 'highmass', 0.0))
     setattr(proc_params, 'F1_specwidth', config.getfloat( "import", 'F1_specwidth', 50000))

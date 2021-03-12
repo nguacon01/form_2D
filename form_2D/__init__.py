@@ -40,6 +40,3 @@ def create_app():
         app.logger.addHandler(filehandle)
         
         return app
-
-# app = create_app()
-# from .utils import filters

@@ -1,77 +1,39 @@
-<footer class="footer" role="contentinfo">
-    <div class="cas-blue-bg footer-top">
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-4 text-center footer-left">
-                <a href="http://www.casc4de.eu" class="logo">
-                    <!-- svg logo - toddmotto.com/mastering-svg-use-for-a-retina-web-fallbacks-with-png-script -->
-                    <img src="http://www.casc4de.eu/wp-content/themes/casc4de/img/branding/casc4de_logo_footer.png"
-                        alt="" class="logo-img img-responsive">
-                </a>
-            </div>
-            <div class="col-xs-4 text-center footer-center" style="font-weight: 600;">
-                <div id="text-3" class="widget_text">
-                    <div class="textwidget"><strong>CASC4DE</strong><br>
-                        Pôle API - 300 Boulevard Sébastien Brant <br>
-                        67400 ILLKIRCH - FRANCE<br>
-                        <a href="/mentions-legales">Mentions légales</a></div>
+    <nav class="navbar navbar-inverse navbar-fixed-bottom" style="background-color: #0A2B3D;height:40px">
+        <div class="navbar-footer">
+            <div class="container">
+                <div class="col-md-3 col-12">
+                    <p style="color:white;font-size: 11px" class="navbar-text">
+                        <a></a>
+                    </p>
+                </div>
+                <div class="col-md-6 col-12" style="text-align: center">
+                    <p style="color:white;font-size: 11px;align-content: center; vertical-align: bottom;padding-top: 7px"
+                        class="navbar-text-center">
+                        <strong>Casc4de 2019 | <a href="">Terms and conditions</a>
+                            |<a href="/contact"> Contact us </a></strong><br>
+                        <a href="http://www.casc4de.eu/"><img alt="Bootstrap Image Preview"
+                                src="{{url_for('seafile_client.static', filename = 'img/casc4de_logo_complete.png')}}"
+                                style="width:auto;height:20px" /></a>
+                    </p>
+                </div>
+                <div class="col-md-3 col-12" style="text-align: right;padding-top: 15px">
+                    <p style="color:white;font-size: 11px;align-content: right; vertical-align: bottom;"
+                        class="navbar-text-center">
+                        <a href="https://github.com/"><img alt="Bootstrap Image Preview"
+                                src="{{url_for('seafile_client.static', filename = 'img/bitbucketlogo.png')}}"
+                                style="width:auto;height:20px;padding-right: 2px;padding-left: 2px" /></a>
+                        <a href="https://twitter.com/_casc4de_"><img
+                                src="{{url_for('seafile_client.static', filename = 'img/Twitter_Bird.png')}}"
+                                style="width:auto;height:20px;padding-right: 2px;padding-left: 2px" /></a>
+                    </p>
                 </div>
             </div>
-            <div class="col-xs-4 text-right footer-right">
-                
-            </div>
         </div>
+    </nav>
     </div>
-</footer><!-- /footer -->
-
-<style type="text/css" id="custom_scbn_style">
-    #scnb-cookie-bar {
-        background-color: #fff;
-        color: #000;
-        font-size: 12px;
-        border-top: 3px solid #ccc;
-    }
-
-    .scnb-buttons a {
-        background-color: #2f6d94;
-        color: #fff;
-        border: 2px solid 1;
-    }
-
-    .scnb-text {
-        text-align: center;
-    }
-
-    .scnb-text {
-        width: 70%;
-    }
-
-    .scnb-buttons {
-        width: 27%;
-        margin-left: 3%;
-    }
-</style>
-
-
-<!-- Lightbox Plus Colorbox v2.7.2/1.5.9 - 2013.01.24 - Message: 1-->
-<script type="text/javascript">
-    jQuery(document).ready(function ($) {
-        $("a[data-lightboxplus*=lightbox]").each(function () {
-            $(this).colorbox({ rel: $(this).attr("data-lightboxplus"), initialWidth: "30%", initialHeight: "30%", maxWidth: "90%", maxHeight: "90%", opacity: 0.8 });
-        });
-        $(".lbp_secondary").each(function () {
-            $(this).colorbox({ rel: $(this).attr("data-lightboxplus"), speed: 300, innerWidth: "50%", innerHeight: "50%", initialWidth: "30%", initialHeight: "40%", maxWidth: "90%", maxHeight: "90%", opacity: 0.8, iframe: true });
-        });
-        $(".lbp-inline-link-01").colorbox({ transition: "elastic", speed: "300", width: "80%", height: "80%", innerWidth: false, innerHeight: false, maxWidth: "80%", maxHeight: "80%", top: false, right: false, bottom: false, left: false, fixed: false, open: false, opacity: "0.8", inline: true, href: "#lbp-inline-href-01" });
-        $(".lbp-inline-link-02").colorbox({ transition: "elastic", speed: "300", width: "80%", height: "80%", innerWidth: false, innerHeight: false, maxWidth: "80%", maxHeight: "80%", top: false, right: false, bottom: false, left: false, fixed: false, open: false, opacity: "0.8", inline: true, href: "#lbp-inline-href-02" });
-        $(".lbp-inline-link-03").colorbox({ transition: "elastic", speed: "300", width: "80%", height: "80%", innerWidth: false, innerHeight: false, maxWidth: "80%", maxHeight: "80%", top: false, right: false, bottom: false, left: false, fixed: false, open: false, opacity: "0.8", inline: true, href: "#lbp-inline-href-03" });
-        $(".lbp-inline-link-04").colorbox({ transition: "elastic", speed: "300", width: "80%", height: "80%", innerWidth: false, innerHeight: false, maxWidth: "80%", maxHeight: "80%", top: false, right: false, bottom: false, left: false, fixed: false, open: false, opacity: "0.8", inline: true, href: "#lbp-inline-href-04" });
-        $(".lbp-inline-link-05").colorbox({ transition: "elastic", speed: "300", width: "80%", height: "80%", innerWidth: false, innerHeight: false, maxWidth: "80%", maxHeight: "80%", top: false, right: false, bottom: false, left: false, fixed: false, open: false, opacity: "0.8", inline: true, href: "#lbp-inline-href-05" });
-    });
-</script>
-
-<!-- analytics -->
+    <!-- Notification -->
+    <div role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="true">
+        <div class="toast-body"></div>
+    </div>
 </body>
-
 </html>
