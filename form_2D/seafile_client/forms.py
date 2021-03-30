@@ -188,7 +188,7 @@ class ConfigForm(FlaskForm):
     pgsane_rank = StringField(
         "pgsane_rank",
         validators=[
-            Regexp(regex=regexp_float)
+            Regexp(regex=regexp_float, message="pgsane_rank must be a number.")
         ],
         description="PG_SANE combines 2 approaches: SANE (see above) and PG\
                     Rank used for SANE ~ the number of lines expected in each column."
@@ -196,14 +196,14 @@ class ConfigForm(FlaskForm):
     pgsane_threshold = StringField(
         "pgsane_threshold",
         validators=[
-            Regexp(regex=regexp_float)
+            Regexp(regex=regexp_float, message="pgsane_threshold must be a number.")
         ],
         description="PG needs a threshold to reject artefacts below threshold x noise; the lower the more inclusive."
     )
     pgsane_iterations = StringField(
         "pgsane_iterations",
         validators=[
-            Regexp(regex=regexp_float)
+            Regexp(regex=regexp_float, message="pgsane_iterations must be a number.")
         ],
         description="PG_SANE iterations are required to obtain convergence, usually the more the better (and the slower)."
     )
@@ -230,6 +230,7 @@ class ConfigForm(FlaskForm):
     peakpicking_noise_level = StringField(
         "peakpicking_noise_level",
         validators=[
+            Regexp(regex=regexp_float, message = 'sane_iterations must be a number')
         ],
         description="Peaks are detected if larger a ratio of noise level, larger than 10  (10 x sigma) should be ok.."
     )
