@@ -127,13 +127,17 @@ async function predict_time_calculation(){
         spg = 1;
         rank = $('#sane_rank').val();
         iters = $('#sane_iterations').val();
-        nproc = 4;
+        nproc = 7;
     }
     if ($('#do_pgsane').val() == 'True'){
         spg = 2;
         rank = $('#pgsane_rank').val();
         iters = $('#pgsane_iterations').val();
         nproc = 7
+    }
+    if($('#do_sane').val() == 'False' && $('#do_pgsane').val() == 'False'){
+        spg = 0;
+        nproc = 4;
     }
     if (values.match(/^([0-9]{0,1}.?[0-9]\s{1}[0-9]{0,1}.?[0-9])$/g)){
         m1 = values.split(" ")[0];
@@ -166,7 +170,8 @@ async function predict_time_calculation(){
         console.log('the total time of calcualtion is not calculed');
     }else{
         let data = await response.json()
-        console.log(data)
+        console.log(data);
+        $('.duration_cal').html(Math.round(data.predicted_time));
     }
 }
 
