@@ -1,11 +1,6 @@
 $(document).ready(function(){
     $("#peakpicking").on("change", function(){
-        var $this = $(this)
-        if($this.val() == "True"){
-            $(".peakpicking_child").removeClass('hidden');
-        }else{
-            $(".peakpicking_child").addClass('hidden');
-        }
+        handlePeakpicking();
     });
     if($("#peakpicking").val() == "False"){
         $(".peakpicking_child").addClass('hidden');
@@ -34,7 +29,7 @@ $(document).ready(function(){
     });
 
     $("#compress_outfile").on("change", function(){
-        var $this = $(this)
+        let $this = $(this)
         if($this.val() == "True"){
             $(".compress_outfile_child").removeClass('hidden');
         }else{
@@ -43,7 +38,7 @@ $(document).ready(function(){
     });
 
     $("#do_urqrd").on("change", function(){
-        var $this = $(this)
+        let $this = $(this)
         if($this.val() == "True"){
             $(".do_urqrd_child").removeClass('hidden');
         }else{
@@ -54,7 +49,6 @@ $(document).ready(function(){
     $("#do_pgsane").on("change", function(){
         handlePgSaneSelection();
     });
-
 
     //sizemultipliers on change event
     get_values_sizemultipliers();
@@ -83,12 +77,12 @@ $(document).ready(function(){
 
 //sizemultipliers function
 function get_values_sizemultipliers(){
-    var values = $("#sizemultipliers").val();
+    let values = $("#sizemultipliers").val();
     if (values.match(/^([0-9]{0,1}.?[0-9]\s{1}[0-9]{0,1}.?[0-9])$/g)){
-        var m1 = values.split(" ")[0];
-        var m2 = values.split(" ")[1];
-        var sizeF1 = $("#sizeF1").val();
-        var sizeF2 = $("#sizeF2").val();
+        let m1 = values.split(" ")[0];
+        let m2 = values.split(" ")[1];
+        let sizeF1 = $("#sizeF1").val();
+        let sizeF2 = $("#sizeF2").val();
         $.ajax({
             type: "GET",
             contentType: "application/json",
@@ -103,7 +97,7 @@ function get_values_sizemultipliers(){
         .always(function(res){
             if (res.status == "success"){
                 $("#spec_sizes").html("Spec size: " + res.spec_size.sizeF1/1024 + "k x " + res.spec_size.sizeF2/1024+ "k");
-                $("#uncomp_sizes").html("Uncompressed sizes: " + res.uncompressed_size + "MB");
+                $("#uncomp_sizes").html("Uncompressed size: " + Math.round(res.uncompressed_size/1024) + "Gb");
             }
         });
     }else{
@@ -210,4 +204,13 @@ function handleSaneSelection(){
         $(".do_sane_child").addClass('hidden');
     }
     predict_time_calculation();
+}
+
+function handlePeakpicking(){
+    let peakPicking = $("#peakpicking")
+    if(peakPicking.val() == "True"){
+        $(".peakpicking_child").removeClass('hidden');
+    }else{
+        $(".peakpicking_child").addClass('hidden');
+    }
 }
