@@ -4,24 +4,26 @@
 <link rel="stylesheet" href="{{url_for('seafile_client.static', filename='css/style.css')}}">
 <link href="{{url_for('seafile_client.static', filename = 'css/config_style.css')}}" rel="stylesheet">
 <div class="seafile-page">
-    {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-        </div>
-    {% endfor %}
-
-    {% if form.errors %}
-        {% for err, err_mes in form.errors.items() %}
-        <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ err_mes[0] }}
-        </div>
-      {% endfor %}
-    {% else %}
-        <div></div>
-    {% endif %}
+    
     <form class="mscf-form" method="POST" action="{{url_for('seafile_client.edit_mscf', repo_id=repo_id, file_full_path=file_full_path, parent_dir=parent_dir, config_filename=config_filename)}}">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% if form.errors %}
+            {% for err, err_mes in form.errors.items() %}
+            <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ err_mes[0] }}
+            </div>
+        {% endfor %}
+        {% else %}
+            <div></div>
+        {% endif %}
+        
         {{ form.csrf_token }}
         <!-- <div class="row"> -->
             <div class="col-md-12">

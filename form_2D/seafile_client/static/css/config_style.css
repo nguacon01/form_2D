@@ -29,6 +29,9 @@ legend{
     font-weight: bold;
     border-bottom: 1px dashed #333;
 }
+.alert-warning{
+    width: 1200px;
+}
 .proj_info{
   margin-bottom: 10px;
   border: solid 2px #3498db;

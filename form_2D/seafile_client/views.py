@@ -23,6 +23,13 @@ from datetime import datetime
 import glob
 from urllib.parse import urlparse
 from pathlib import Path
+import json
+
+from form_2D.libs.seafile_api import custom_seafileapi
+from form_2D.libs.seafile_api.custom_seafileapi.files import SeafDir, SeafFile
+from form_2D.libs.seafile_api.custom_seafileapi.utils import seafile_token_require
+from form_2D.metadata.views import metadata
+from .helpers import predict
 
 import shutil
 
@@ -206,6 +213,7 @@ def dir_items():
     return render_template('seafile_client/dir_items.html', data=data, dir_name=dir_name, repo_id=repo_id)
 
 @seafile_client.route('/sub_dir', methods=['POST', 'GET'])
+@seafile_token_require
 def sub_dir():
     repo_id = request.args.get('repo_id')
     dir_name = request.args.get('dir_name')
@@ -703,6 +711,7 @@ def handle_button():
     
 
 @seafile_client.route('/logout')
+@seafile_token_require
 def logout():
     """
     after user logout, their files in tmp folder will be deleted
@@ -754,3 +763,43 @@ def comp_sizes():
         201
     )
 
+@seafile_client.route('/predict_temp', methods=['GET'])
+def predict_time():
+    nproc= float(request.args.get('nproc', 7))
+    si1= float(request.args.get('si1', 0))
+    si2= float(request.args.get('si2',0))
+    zf1= float(request.args.get('zf1',0))
+    zf2= float(request.args.get('zf2',0))
+    spg= float(request.args.get('spg',0))
+    rank= float(request.args.get('rank',0))
+    iters= float(request.args.get('iters',0))
+    didimp= float(request.args.get('didimp', 1))
+    # predicted_time = predict(nproc=nproc, si1=si1, si2=si2, zf1=zf1, zf2=zf2, SPG=spg,rank=rank, iters=iters, didimp=didimp)
+    # return str(predicted_time)
+    # return jsonify({
+    #         'nproc':nproc, 
+    #         'si1':si1, 
+    #         'si2':si2, 
+    #         'zf1':zf1, 
+    #         'zf2':zf2, 
+    #         'SPG':spg,
+    #         'rank':rank, 
+    #         'iters':iters, 
+    #         'didimp':didimp
+    #     })
+    predicted_time = predict(nproc=nproc, si1=si1, si2=si2, zf1=zf1, zf2=zf2, SPG=spg,rank=rank, iters=iters, didimp=didimp)
+    
+    return make_response(jsonify({
+        'params':{
+            'nproc':nproc, 
+            'si1':si1, 
+            'si2':si2, 
+            'zf1':zf1, 
+            'zf2':zf2, 
+            'SPG':spg,
+            'rank':rank, 
+            'iters':iters, 
+            'didimp':didimp
+        },
+        'predicted_time' : predicted_time
+    }), 200)
