@@ -15,6 +15,8 @@ from form_2D.libs.EUFT_Spike import processing_4EU as proc_spike
 from form_2D.libs.seafile_api import custom_seafileapi
 from form_2D.libs.seafile_api.custom_seafileapi.files import SeafDir, SeafFile
 from form_2D.libs.seafile_api.custom_seafileapi.utils import seafile_token_require
+from form_2D.libs.seafile_api.custom_seafileapi.repo import Repo
+
 import json
 from form_2D.metadata.views import metadata
 from datetime import datetime
@@ -134,6 +136,33 @@ def repo_items():
 
     return render_template('seafile_client/repo_items.html', data=data, repo_name=repo_name)
 
+@seafile_client.route('/get_link_download_zip', methods=['GET', 'POST'])
+def get_link_download_zip():
+    if request.method == 'GET':
+        args = request.args
+        repo_id = args['repo_id']
+        repo_name = args['repo_name']
+        parent_dir = args['parent_dir']
+        folder_name = args['name']
+        folder_fullpath = args['fullpath'][:-1]
+
+        request_upload_link = server+f"/api/v2.1/repos/{repo_id}/zip-task/?parent_dir={parent_dir}&dirents={folder_name}"
+
+        _headers = {
+            'Authorization':'Token {}'.format(session['seafile_token'])
+        }
+
+        response = requests.get(url=request_upload_link, headers=_headers, verify=False)
+        if response.status_code == 200:
+            zip_token = response.json()['zip_token']
+            return make_response(jsonify({
+                "url":server + f"/seafhttp/zip/{zip_token}"
+            })), 200
+        else:
+            return make_response("File is too large to download"), 400
+
+        
+
 @seafile_client.route('/dir_items')
 @seafile_token_require
 def dir_items():
@@ -166,7 +195,7 @@ def dir_items():
             try:
                 # check if sub directory of FTICR_DATA has ser file or not
                 # re = my_library_repo.get_file(path=sub_dir.full_path+'ser', parent_dir=sub_dir.full_path)
-                re = my_library_repo.get_file(path=item.full_path+'ser', parent_dir=item.full_path)
+                # re = my_library_repo.get_file(path=item.full_path+'ser', parent_dir=item.full_path)
                 # if 'FTICR_DATA' in sub_dir.full_path:
                 #     data.append(sub_dir)
                 data.append(item)

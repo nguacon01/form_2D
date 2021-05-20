@@ -6,11 +6,54 @@
         <ul class="seafile-list">
             {% for item in data %}
                 <li class="list-item">
-                    <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.sub_dir', dir_fullpath=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, dir_name=item.name)}}">{{item.name}}</a>       
+                    <a class="hvr-sweep-to-right" href="{{url_for('seafile_client.sub_dir', dir_fullpath=item.full_path, repo_id=item.repo.id, parent_dir=item.parent_dir, dir_name=item.name)}}">{{item.name}}</a>
+                    <button class="download_zip" repo_id="{{item.repo.id}}" repo_name="{{item.repo.name}}" fullpath="{{item.full_path}}" parent_dir="{{item.parent_dir}}" name="{{item.name}}">download</button>  
                 </li>
             {% endfor %}
         </ul>
     </div>
 </div>
+<script>
+    $('.download_zip').on('click', function(){
+        const $this = $(this);
+        const repo_id = $this.attr('repo_id');
+        const repo_name = $this.attr('repo_name');
+        const fullpath = $this.attr('fullpath');
+        const parent_dir = $this.attr('parent_dir');
+        const name = $this.attr('name');
+        console.log(name);
+        get_zip_download_link(repo_id, repo_name, parent_dir, name, fullpath)
+    });
+
+    async function get_zip_download_link(repo_id, repo_name, parent_dir, name, fullpath){
+        let params = {
+            "repo_id":repo_id,
+            "parent_dir":parent_dir,
+            "name":name,
+            "repo_name":repo_name,
+            "fullpath":fullpath
+        };
+        let query = Object.keys(params)
+                        .map(k=>encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+                        .join('&');
+        let url = '/seafile_client/get_link_download_zip?' + query;
+        console.log(url);
+        const resp = await fetch(url);
+        if (resp.ok){
+            const resp_json = await resp.json();
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = resp_json['url'];
+            a.download = name;
+            document.body.appendChild(a);
+            console.log(a)
+            a.click();
+            window.URL.revokeObjectURL(resp_json['url']);
+            alert('your file is downloaded');
+        }else{
+            alert('Your file can not be downloaded. File is too large.');
+        }
+    }
+</script>
     
 {% endblock content %}
