@@ -142,7 +142,7 @@ def dir_items():
     """
     get list of .d downstream directories in a FTICR_DATA directory
     """
-
+    # return session['seafile_token']
     client = custom_seafileapi.connect(server, token=session['seafile_token'], verify_ssl=False)
     list_repos = client.repos.list_repos(type="mine", nameContains='My Library')
     if len(list_repos) != 1:

@@ -96,6 +96,8 @@ function get_values_sizemultipliers(){
         })
         .always(function(res){
             if (res.status == "success"){
+                console.log(res.spec_size);
+                console.log(res.uncompressed_size);
                 $("#spec_sizes").html("Spec size: " + res.spec_size.sizeF1/1024 + "k x " + res.spec_size.sizeF2/1024+ "k");
                 $("#uncomp_sizes").html("Uncompressed size: " + Math.round(res.uncompressed_size/1024) + "Gb");
             }
